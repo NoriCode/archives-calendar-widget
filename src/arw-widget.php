@@ -40,7 +40,7 @@ class Archives_Calendar extends WP_Widget {
 			'different_theme'    => 0,
 			'theme'              => null,
 			'categories'         => null,
-			'post_type'          => array('post'),
+			'post_type'          => array( 'post' ),
 			'show_today'         => 0
 		);
 		$instance = wp_parse_args( $instance, $defaults );
@@ -83,7 +83,7 @@ class Archives_Calendar extends WP_Widget {
 		$instance['different_theme']    = ( $new_instance['different_theme'] ) ? $new_instance['different_theme'] : 0;
 		$instance['theme']              = $new_instance['theme'];
 		$instance['categories']         = $new_instance['categories'];
-		$instance['post_type']          = ( $new_instance['post_type'] ) ? $new_instance['post_type'] : array('post');
+		$instance['post_type']          = ( $new_instance['post_type'] ) ? $new_instance['post_type'] : array( 'post' );
 
 		return $instance;
 	}
@@ -112,7 +112,7 @@ function archive_calendar( $args = array() ) {
 		'different_theme'    => 0,
 		'theme'              => null,
 		'categories'         => null,
-		'post_type'          => array('post'),
+		'post_type'          => array( 'post' ),
 		'show_today'         => 0
 	);
 	$args     = wp_parse_args( $args, $defaults );
@@ -169,6 +169,8 @@ function archives_view( $args ) {
 	return $cal;
 }
 
+include 'functions.php';
+
 /***** YEAR DISPLAY MODE *****/
 function archives_year_view( $args, $sql ) {
 	global $wpdb, $wp_locale, $post;
@@ -178,26 +180,8 @@ function archives_year_view( $args, $sql ) {
 
 	$years = array();
 	foreach ( $results as $date ) {
-		if ( $post_count ) // if set to show post count
-		{
-			$sql = "SELECT COUNT(DISTINCT(ID)) AS count FROM $wpdb->posts wpposts ";
+		$count = $post_count ? get_post_count( $date->year, $date->month, $post_type, $categories ) : 0;
 
-			if ( count( $categories ) ) {
-				$sql .= "JOIN $wpdb->term_relationships tr ON ( wpposts.ID = tr.object_id )
-					JOIN $wpdb->term_taxonomy tt ON ( tr.term_taxonomy_id = tt.term_taxonomy_id
-					AND tt.term_taxonomy_id IN(" . $cats . ") ) ";
-			}
-			$sql .= "WHERE post_type IN ('" . implode( "','", explode( ',', $post_type ) ) . "')
-					AND post_status IN ('publish')
-					AND post_password=''
-					AND YEAR(post_date) = $date->year
-					AND MONTH(post_date) = $date->month";
-
-			$postcount = $wpdb->get_results( $sql );
-			$count     = $postcount[0]->count;
-		} else {
-			$count = 0;
-		}
 		$years[ $date->year ][ $date->month ] = $count;
 	}
 
@@ -437,10 +421,10 @@ function archives_month_view( $args, $sql ) {
 
 			if ( in_array( $j, $dayswithposts ) ) {
 				$date_str = $months[ $i ]->year . '-' . $months[ $i ]->month . '-' . $j;
-				$href  = make_arcw_link( get_day_link( $months[ $i ]->year, $months[ $i ]->month, $j ), $post_type, $cats );
-				$title = date_i18n( get_option( 'date_format' ), strtotime( $date_str ) );
+				$href     = make_arcw_link( get_day_link( $months[ $i ]->year, $months[ $i ]->month, $j ), $post_type, $cats );
+				$title    = date_i18n( get_option( 'date_format' ), strtotime( $date_str ) );
 				$cal .= '<span class="day' . $last . $todayClass . ' has-posts">'
-				        . '<a href="' . $href . '" title="' . $title . '" data-date="'. $date_str .'">' . $j . '</a>'
+				        . '<a href="' . $href . '" title="' . $title . '" data-date="' . $date_str . '">' . $j . '</a>'
 				        . '</span>';
 			} else {
 				$cal .= '<span class="day' . $last . $todayClass . '">' . $j . '</span>';
