@@ -1,6 +1,6 @@
 {
   "name": "archives-calendar-widget",
-  "version": "1.0.12",
+  "version": "2.0.0-alpha",
   "description": "Grunt for building the Archives-Calendar-Widget plogin",
   "main": " ",
   "scripts": {
