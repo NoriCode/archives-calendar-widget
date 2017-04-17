@@ -29,7 +29,7 @@ License: GPLv3
  ****/
 
 define( 'ARCWV', '@@version' ); // current version of the plugin
-define( 'ARCW_DEBUG', false ); // enable or disable debug (for dev instead of echo or print_r use debug() function)
+define( 'ARCW_DEBUG', true ); // enable or disable debug (for dev instead of echo or print_r use debug() function)
 
 $themes = array(
 	'calendrier'          => 'Calendrier',
@@ -55,7 +55,7 @@ add_action( 'init', 'archivesCalendar_init' );
 // ADD setting action link
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'arcw_plugin_action_links' );
 // Register and enqueue Archives Calendar Widjet jQuery plugin
-add_action( 'wp_enqueue_scripts', 'archivesCalendar_jquery_plugin' );
+add_action( 'wp_enqueue_scripts', 'archivesCalendar_script' );
 // Scripts to be included on Widget configuration page
 add_action( 'admin_print_scripts-widgets.php', 'arcw_admin_widgets_scripts' );
 add_action( 'admin_print_scripts-customize.php', 'arcw_admin_widgets_scripts' );
@@ -79,11 +79,12 @@ function arcw_plugin_action_links( $links ) {
 	return $links;
 }
 
-function archivesCalendar_jquery_plugin() {
-	global $archivesCalendar_options;
-	$jQarcw = $archivesCalendar_options['plugin-init'] == 1 ? '/admin/js/jquery.arcw-init.js' : '/admin/js/jquery.arcw.js';
-	wp_register_script( 'jquery-arcw', plugins_url( $jQarcw, __FILE__ ), array( "jquery" ), ARCWV );
-	wp_enqueue_script( 'jquery-arcw' );
+/**
+ * Register and Add the plugin's JavaScript
+ */
+function archivesCalendar_script() {
+	wp_register_script( 'arcw-script', plugins_url( '/admin/js/arcw.js', __FILE__ ), array(), ARCWV );
+	wp_enqueue_script( 'arcw-script' );
 }
 
 function archives_calendar_styles() {
@@ -113,29 +114,6 @@ function update_url_params( $url, $addparams = array() ) {
 
 	return $url_parts['scheme'] . '://' . $url_parts['host'] . $url_parts['path'] . '?' . $url_parts['query'];
 }
-
-function make_arcw_link( $url, $type = null, $cats = null ) {
-	global $archivesCalendar_options;
-
-	$enabled = $archivesCalendar_options['filter'];
-
-	if ( ! $enabled || ( $enabled && ( ! $type || $type == "post" ) && ! $cats ) ) {
-		return $url;
-	}
-
-	$params = array( 'arcf' => '' );
-	$attr   = &$params['arcf'];
-	if ( ! empty( $type ) && count( $type ) && $type != 'post' ) {
-		$attr = 'post:' . str_replace( ',', '+', $type );
-	}
-	if ( ! empty( $cats ) ) {
-		$attr .= $attr != '' ? ':' : '';
-		$attr .= 'cat:' . str_replace( ', ', '+', $cats );
-	}
-
-	return update_url_params( $url, $params );
-}
-
 
 // Activate filter in archives page
 if ( isset( $archivesCalendar_options['filter'] ) && $archivesCalendar_options['filter'] == 1 ) {

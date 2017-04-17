@@ -12,7 +12,7 @@
 	<div class="calendar-navigation">
 		<?php include 'header.php'; ?>
 	</div>
-	<div class="archives-years">
+	<div class="archives-years" style="height:300px">
 		<?php
 		if($arcw->config['month_view']){
 			include 'calendar-months.php';

@@ -17,6 +17,7 @@
 function get_post_count( $year, $month, $post_type, $categories ) {
 	global $wpdb;
 
+	$categories = $categories ? $categories : array();
 	$cats = implode( ', ', $categories );
 	$types = "'" . implode( "','", explode( ',', $post_type ) ) . "'"; // 'post','custom'
 

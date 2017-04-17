@@ -9,8 +9,10 @@ $nbPages    = count( $navigation );
 ?>
 
 <?php if ( $nbPages > 1 ) : ?>
-	<span class="prev-year" data-nav="prev">
-		<span><?php echo html_entity_decode( $arcw->config['prev_text'] ) ?></span>
+	<span class="prev-year">
+		<button class="btn-nav" data-nav="prev">
+			<?php echo html_entity_decode( $arcw->config['prev_text'] ) ?>
+		</button>
 	</span>
 <?php endif ?>
 
@@ -23,26 +25,23 @@ $nbPages    = count( $navigation );
 			<?php
 			foreach ( $navigation as $nav ) {
 				?>
-				<li class="<?php echo $nav['active'] ? 'current' : '' ?>">
-				<span data-href="<?php echo $nav['url'] ?>">
-					<?php echo $nav['title']; ?>
-				</span>
-				</li>
+				<li class="nav-item <?php echo $nav['active'] ? 'active' : '' ?>" data-href="<?php echo $nav['url'] ?>"><?php echo $nav['title']; ?></li>
 				<?php
 			}
 			?>
 		</ul>
 
 		<?php if ( $nbPages > 1 ): ?>
-			<div class="arrow-down">
-				<span>&#x25bc;</span>
-			</div>
+<!-- TODO: arrow-down class should be removed, need modification in CSS -->
+			<div class="nav-toggle arrow-down"></div>
 		<?php endif ?>
 	</div>
 
 <?php if ( $nbPages > 1 ): ?>
-	<span class="next-year" data-nav="next">
-		<span><?php echo html_entity_decode( $arcw->config['next_text'] ) ?></span>
+	<span class="next-year">
+		<button class="btn-nav" data-nav="next">
+			<?php echo html_entity_decode( $arcw->config['next_text'] ) ?>
+		</button>
 	</span>
 <?php endif;
 

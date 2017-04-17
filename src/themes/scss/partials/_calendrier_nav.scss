@@ -80,11 +80,6 @@
 		}
 
 		> ul.menu {
-			position: absolute;
-			display: none;
-			width: 100%;
-			top: 0;
-			overflow: hidden;
 			border: none;
 			border-radius: 5px;
 			box-shadow: 0 0 10px rgba(0,0,0,.5);
@@ -110,7 +105,7 @@
 						cursor: default;
 					}
 				}
-				&.current {
+				&.active {
 
 				}
 			}
@@ -123,7 +118,6 @@
 			right: 0;
 			font-family: Verdana, Arial, Helvetica, sans-serif;
 			color: $text-color;
-			font-size: 10px;
 			cursor: pointer;
 			&:hover {
 				background-color: rgba(255,255,255,.1);

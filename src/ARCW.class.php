@@ -64,7 +64,7 @@ class ARCW {
 		        "AND post_status IN ('publish') " .
 		        "AND post_password='' " .
 		        "GROUP BY year,month " .
-		        "ORDER BY year ASC";
+		        "ORDER BY year DESC";
 
 		// execute the query
 		$results = $this->wpdb->get_results( $sql, ARRAY_A );
@@ -118,6 +118,26 @@ class ARCW {
 		return key( $array );
 	}
 
+	/**
+	 * Return the key of the first element of an array
+	 *
+	 * @param $array
+	 *
+	 * @return mixed
+	 */
+	function startKey( $array ) {
+		reset($array);
+		return key( $array );
+	}
+
+	/**
+	 * Return the active date object
+	 * Active date is
+	 * - current date
+	 * - date of currently displayed archive page
+	 * - date of the last/previous/next month
+	 * @return stdClass
+	 */
 	private function get_active_date() {
 		if ( $this->config['month_view'] ) {
 			return $this->get_active_month();
@@ -182,12 +202,12 @@ class ARCW {
 
 					// if the month does not exist get the latest available
 					if ( ! array_key_exists( $year, $this->dates ) || ! array_key_exists( $month, $this->dates[ $year ] ) ) {
-						$year  = $this->endKey( $this->dates );
-						$month = $this->endKey( $this->dates[ $year ] );
+						$year  = $this->startKey( $this->dates );
+						$month = $this->startKey( $this->dates[ $year ] );
 					}
 				} else {
-					$year  = $this->endKey( $this->dates );
-					$month = $this->endKey( $this->dates[ $year ] );
+					$year  = $this->startKey( $this->dates );
+					$month = $this->startKey( $this->dates[ $year ] );
 				}
 		}
 
@@ -213,7 +233,7 @@ class ARCW {
 
 		// In the year view show only the latest available year
 		// set year to the last year in the dates list
-		$year = $this->endKey( $this->dates );
+		$year = $this->startKey( $this->dates );
 
 		// if currently viewing archives set the year to the matching archive year
 		if ( is_archive() ) {
@@ -221,7 +241,7 @@ class ARCW {
 
 			// if there is no dates for the archive year reset it to the last one
 			if ( ! array_key_exists( $year, $this->dates ) ) {
-				$year = $this->endKey( $this->dates );
+				$year = $this->startKey( $this->dates );
 			}
 		}
 

@@ -13,13 +13,9 @@ module.exports = function (grunt) {
 
 	var jsFiles = {
 		'<%= paths.dist %>/admin/js/admin.js': ['<%= paths.src %>/admin/scripts/admin.js'],
-			'<%= paths.dist %>/admin/js/themer.js': ['<%= paths.src %>/admin/scripts/themer.js'],
-			'<%= paths.dist %>/admin/js/widgets-page.js': ['<%= paths.src %>/admin/scripts/widgets-page.js'],
-			'<%= paths.dist %>/admin/js/jquery.arcw.js': ['<%= paths.src %>/admin/scripts/jquery.arcw.js'],
-			'<%= paths.dist %>/admin/js/jquery.arcw-init.js': [
-			'<%= paths.src %>/admin/scripts/jquery.arcw.js',
-			'<%= paths.src %>/admin/scripts/jquery.arcw-init.js'
-		]
+		'<%= paths.dist %>/admin/js/themer.js': ['<%= paths.src %>/admin/scripts/themer.js'],
+		'<%= paths.dist %>/admin/js/widgets-page.js': ['<%= paths.src %>/admin/scripts/widgets-page.js'],
+		'<%= paths.dist %>/admin/js/arcw.js': ['<%= paths.src %>/admin/scripts/arcw.js']
 	};
 
 	grunt.initConfig({
@@ -189,7 +185,7 @@ module.exports = function (grunt) {
 					patterns: [{
 						match: /[#][ ]?(Changelog)/g,
 						replacement: "== $1 =="
-					},{
+					}, {
 						match: /[#]{2}[ ]?(.+)/g,
 						replacement: "= $1 ="
 					}]
@@ -213,7 +209,7 @@ module.exports = function (grunt) {
 
 	});
 
-	grunt.registerTask('default', '', function(){
+	grunt.registerTask('default', '', function () {
 		grunt.fatal('Use "serve", "build" or "release" tasks');
 	});
 

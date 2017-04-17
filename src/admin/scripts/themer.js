@@ -11,7 +11,7 @@ var Editor = function () {
 };
 
 Editor.prototype.open = function (index) {
-	if (this.active == index)
+	if (this.active === index)
 		return;
 
 	var self = this,
@@ -86,7 +86,7 @@ Editor.prototype.handleFileSelect = function(evt) {
 
 	// If we use onloadend, we need to check the readyState.
 	reader.onloadend = function(evt) {
-		if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+		if (evt.target.readyState === FileReader.DONE) { // DONE == 2
 			var code = evt.target.result,
 				theme;
 			if(code.match(/theme1/)){
@@ -101,7 +101,7 @@ Editor.prototype.handleFileSelect = function(evt) {
 			}
 			self.editors[theme].setValue(code);
 
-			if(self.active != theme) {
+			if(self.active !== theme) {
 				self.open(theme);
 			}
 		}
@@ -114,7 +114,7 @@ Editor.prototype.handleFileSelect = function(evt) {
 jQuery(function ($) {
 	var editor = new Editor();
 
-	if(typeof editor_tab != 'undefined'){
+	if(typeof editor_tab !== 'undefined'){
 		editor.open(editor_tab);
 	}
 

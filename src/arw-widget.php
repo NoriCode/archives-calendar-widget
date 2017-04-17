@@ -5,8 +5,14 @@ Author URI: http://alek.be
 License: GPLv3
 */
 
+require_once 'ARCW.class.php';
+
 /***** WIDGET CLASS *****/
 class Archives_Calendar extends WP_Widget {
+
+	/**
+	 * Register widget with WordPress.
+	 */
 	public function __construct() {
 		parent::__construct(
 			'archives_calendar',
@@ -15,19 +21,33 @@ class Archives_Calendar extends WP_Widget {
 		);
 	}
 
+
+	/**
+	 * Front-end display of widget.
+	 *
+	 * @see WP_Widget::widget()
+	 *
+	 * @param array $args Widget arguments.
+	 * @param array $instance Saved values from database.
+	 */
 	public function widget( $args, $instance ) {
-		extract( $args );
-		$title = apply_filters( 'widget_title', $instance['title'] );
-		echo $before_widget;
-		if ( ! empty( $title ) ) {
-			echo $before_title . $title . $after_title;
+		echo $args['before_widget'];
+		if ( ! empty( $instance['title'] ) ) {
+			echo $args['before_title'] . apply_filters( 'widget_title', $instance['title'] ) . $args['after_title'];
 		}
-		$instance['function'] = 'no';
-		echo archive_calendar( $instance );
-		echo $after_widget;
+
+		archive_calendar( $instance );
+
+		echo $args['after_widget'];
 	}
 
-
+	/**
+	 * Back-end widget form.
+	 * @see WP_Widget::form()
+	 *
+	 * @param array $instance Previously saved values from database.
+	 * @return void
+	 */
 	public function form( $instance ) {
 		$defaults = array(
 			'title'              => __( 'Archives' ),
@@ -66,6 +86,16 @@ class Archives_Calendar extends WP_Widget {
 		include 'arw-widget-settings.php';
 	}
 
+	/**
+	 * Sanitize widget form values as they are saved.
+	 *
+	 * @see WP_Widget::update()
+	 *
+	 * @param array $new_instance Values just sent to be saved.
+	 * @param array $old_instance Previously saved values from database.
+	 *
+	 * @return array Updated safe values to be saved.
+	 */
 	public function update( $new_instance, $old_instance ) {
 		$instance              = $old_instance;
 		$instance['title']     = strip_tags( $new_instance['title'] );
@@ -96,163 +126,24 @@ function archives_calendar_load_widget() {
 
 add_action( 'widgets_init', 'archives_calendar_load_widget' );
 
+global $wp_locale, $arcw;
+
 /***** WIDGET CONSTRUCTION FUNCTION *****/
 /* can be called directly archive_calendar($args) */
-function archive_calendar( $args = array() ) {
-	global $archivesCalendar_options;
+function archive_calendar( $instance ) {
+	global $wp_locale, $arcw;
 
-	$defaults = array(
-		'title'              => '',
-		'next_text'          => '>',
-		'prev_text'          => '<',
-		'post_count'         => 1,
-		'month_view'         => 0,
-		'month_select'       => 'default',
-		'disable_title_link' => 0,
-		'different_theme'    => 0,
-		'theme'              => null,
-		'categories'         => null,
-		'post_type'          => array( 'post' ),
-		'show_today'         => 0
-	);
-	$args     = wp_parse_args( $args, $defaults );
+	$arcw = new ARCW( $instance );
 
-	if ( ! $args['different_theme'] ) {
-		$args['theme'] = $archivesCalendar_options['theme'];
-	}
-
-	if ( $args['theme'] != $archivesCalendar_options['theme'] ) {
-		wp_register_style( 'archives-cal-' . $args['theme'], plugins_url( 'themes/' . $args['theme'] . '.css', __FILE__ ), array(), ARCWV );
-		wp_enqueue_style( 'archives-cal-' . $args['theme'] );
-	}
-
-	if ( is_array( $args['post_type'] ) && count( $args['post_type'] ) > 0 ) {
-		$args['post_type'] = implode( ",", $args['post_type'] );
-	}
-
-	$cal = archives_view( $args );
-
-	if ( isset( $function ) && $function == "no" ) {
-		return $cal;
-	}
-	echo $cal;
+	include 'templates/calendar.php';
 }
 
-function archives_view( $args ) {
-	global $wpdb;
-	extract( $args );
-
-	if ( ! empty( $categories ) && is_array( $categories ) ) {
-		$args['cats'] = implode( ', ', $categories );
-	} else {
-		$args['cats'] = "";
-	}
-
-	$sql = "SELECT DISTINCT YEAR(post_date) AS year, MONTH(post_date) AS month
-		FROM $wpdb->posts wpposts ";
-
-	if ( count( $categories ) ) {
-		$sql .= "JOIN $wpdb->term_relationships tr ON wpposts.ID = tr.object_id
-				 JOIN $wpdb->term_taxonomy tt ON (tr.term_taxonomy_id = tt.term_taxonomy_id ";
-		$sql .= "AND tt.term_id IN(" . $args['cats'] . ") ";
-		$sql .= "AND tt.taxonomy = 'category') ";
-	}
-
-	$sql .= "WHERE post_type IN ('" . implode( "','", explode( ',', $post_type ) ) . "')
-			AND post_status IN ('publish')
-			AND post_password=''
-			ORDER BY year DESC, month DESC";
-
-	$cal = ( $args['month_view'] == false ) ? archives_year_view( $args, $sql ) : archives_month_view( $args, $sql );
-	$cal .= '<!-- END - Archives Calendar Widget by Aleksei Polechin - alek´ - http://alek.be -->';
-
-	return $cal;
-}
 
 include 'functions.php';
 
-/***** YEAR DISPLAY MODE *****/
-function archives_year_view( $args, $sql ) {
-	global $wpdb, $wp_locale, $post;
-	extract( $args );
 
-	$results = $wpdb->get_results( $sql );
-
-	$years = array();
-	foreach ( $results as $date ) {
-		$count = $post_count ? get_post_count( $date->year, $date->month, $post_type, $categories ) : 0;
-
-		$years[ $date->year ][ $date->month ] = $count;
-	}
-
-	$totalyears = count( $years );
-
-	if ( $totalyears == 0 ) {
-		$totalyears           = 1;
-		$years[ date( 'Y' ) ] = array();
-	}
-
-	$yearNb = array();
-	foreach ( $years as $year => $months ) {
-		$yearNb[] = $year;
-	}
-
-	if ( is_archive() ) {
-		$archiveYear = date( 'Y', strtotime( $post->post_date ) ); // year to be visible
-
-		if ( ! array_key_exists( $archiveYear, $years ) ) {
-			$archiveYear = $yearNb[0];
-		}
-	} else {
-		$archiveYear = $yearNb[0];
-	} // if no current year -> show the more recent
-
-	$cal = get_calendar_header( $view = 'years', $yearNb, '', $archiveYear, $args );
-	$cal .= '<div class="archives-years">';
-
-	$i = 0;
-
-	foreach ( $years as $year => $months ) {
-		$lastyear = ( $i == $totalyears - 1 ) ? " last" : "";
-		$current  = ( $archiveYear == $year ) ? " current" : "";
-
-		$cal .= '<div class="year ' . $year . $lastyear . $current . '" rel="' . $i . '">';
-		for ( $month = 1; $month <= 12; $month ++ ) {
-			$last = ( $month % 4 == 0 ) ? ' last' : '';
-			if ( $post_count ) {
-				if ( isset( $months[ $month ] ) ) {
-					$count = $months[ $month ];
-				} else {
-					$count = 0;
-				}
-				$posts_text = ( $count == 1 ) ? __( 'Post', 'arwloc' ) : __( 'Posts', 'arwloc' );
-
-				$postcount = '<span class="postcount"><span class="count-number">' . $count . '</span> <span class="count-text">' . $posts_text . '</span></span>';
-			} else {
-				$postcount = "";
-			}
-			if ( isset( $months[ $month ] ) ) {
-				$href  = make_arcw_link( get_month_link( $year, $month ), $post_type, $cats );
-				$title = $post_count
-					? sprintf( '%s - %s %s', date_i18n( 'F, Y', strtotime( $year . '-' . $month ) ), $count, $posts_text )
-					: date_i18n( 'F, Y', strtotime( $year . '-' . $month ) );
-				$cal .= '<div class="month' . $last . ' has-posts">'
-				        . '<a href="' . $href . '" title="' . $title . '" data-date="' . $year . '-' . $month . '">'
-				        . '<span class="month-name">' . $wp_locale->get_month_abbrev( $wp_locale->get_month( $month ) ) . '</span>' . $postcount
-				        . '</a></div>';
-			} else {
-				$cal .= '<div class="month' . $last . '"><span class="month-name">' . $wp_locale->get_month_abbrev( $wp_locale->get_month( $month ) ) . '</span>' . $postcount . '</div>';
-			}
-		}
-		$cal .= "</div>\n";
-		$i ++;
-	}
-	$cal .= "</div></div>";
-
-	return $cal;
-}
-
-/***** MONTH DISPLAY MODE *****/
+/***** TODO: OLD TO DELTE
+ * MONTH DISPLAY MODE *****/
 function archives_month_view( $args, $sql ) {
 	global $wpdb, $wp_locale, $post;
 	extract( $args );
@@ -455,66 +346,15 @@ function archives_month_view( $args, $sql ) {
 	return $cal;
 }
 
-function get_calendar_header( $view = 'months', $pages, $archiveMonth = null, $archiveYear, $args ) {
-	global $wp_locale;
-	extract( $args );
-	$cal = "\n<!-- Archives Calendar Widget by Aleksei Polechin - alek´ - http://alek.be -->\n";
-	$cal .= '<div class="calendar-archives ' . $theme . '" id="arc-' . $title . '-' . mt_rand( 10, 100 ) . '">';
-	$cal .= '<div class="calendar-navigation">';
 
-	if ( count( $pages ) > 1 ) {
-		$cal .= '<a href="" class="prev-year"><span>' . html_entity_decode( $prev_text ) . '</span></a>';
-	}
-
-	$cal .= '<div class="menu-container ' . $view . '">';
-
-	if ( $view == "months" ) {
-		$title_text = $wp_locale->get_month( intval( $archiveMonth ) ) . " " . $archiveYear;
-		$title_url  = get_month_link( intval( $archiveYear ), intval( $archiveMonth ) );
-	} else {
-		$title_text = $archiveYear;
-		$title_url  = get_year_link( $archiveYear );
-	}
-
-	$title_url = $disable_title_link ? '#' : make_arcw_link( $title_url, $post_type, $cats );
-	$cal .= '<a href="' . $title_url . '" class="title">' . $title_text . '</a>';
-
-	$cal .= '<ul class="menu">';
-
-	$i = 0;
-	foreach ( $pages as $page ) {
-		if ( $view == "months" ) {
-			$archivelink = make_arcw_link( get_month_link( intval( $page->year ), intval( $page->month ) ), $post_type, $cats );
-			$linkclass   = $page->year . ' ' . $page->month;
-			$linktext    = $wp_locale->get_month( intval( $page->month ) ) . ' ' . $page->year;
-		} else {
-			$archivelink = make_arcw_link( get_year_link( $page ), $post_type, $cats );
-			$linkclass   = $page;
-			$linktext    = $page;
-		}
-		$current = ( ( $view == 'months' && $archiveYear == $page->year && $archiveMonth == $page->month ) || ( $view == "years" && $archiveYear == $page ) ) ? ' current' : '';
-		$cal .= '<li><a href="' . $archivelink . '" class="' . $linkclass . $current . '" rel="' . $i . '" >' . $linktext . '</a></li>';
-		$i ++;
-	}
-	$cal .= '</ul>';
-
-	if ( count( $pages ) > 1 ) {
-		$cal .= '<div class="arrow-down"><span>&#x25bc;</span></div>';
-	}
-
-	$cal .= '</div>';
-
-	if ( count( $pages ) > 1 ) {
-		$cal .= '<a href="" class="next-year"><span>' . html_entity_decode( $next_text ) . '</span></a>';
-	}
-
-	$cal .= '</div>';
-
-	return $cal;
-}
-
-
-/***** FIND NUMBER OF DAYS IN A MONTH *****/
+/**
+ * Return the number of days in a specified month
+ * Taking leap years into account
+ * @param $year
+ * @param $month
+ *
+ * @return int
+ */
 function arcw_month_days( $year, $month ) {
 	switch ( intval( $month ) ) {
 		case 4:
@@ -523,7 +363,7 @@ function arcw_month_days( $year, $month ) {
 		case 11: // april, june, september, november
 			return 30; // 30 days
 		case 2: //february
-			if ( $year % 400 == 0 || ( $year % 100 != 00 && $year % 4 == 0 ) ) // intercalary year check
+			if ( $year % 400 == 0 || ( $year % 100 != 00 && $year % 4 == 0 ) ) // leap year check
 			{
 				return 29;
 			} // 29 days or
@@ -531,42 +371,4 @@ function arcw_month_days( $year, $month ) {
 		default: // other months
 			return 31; // 31 days
 	}
-}
-
-
-/***** MONTH SORT / SEARCH *****/
-function arcw_findMonth( $year, $month, $months ) {
-	if ( count( $months ) == 0 ) {
-		return - 1;
-	}
-
-	$i = 0;
-	while ( $i < count( $months ) - 1 && intval( $months[ $i ]->year ) > $year ) {
-		$i ++;
-	}
-
-	if ( $months[ $i ]->year == $year ) {
-		while ( $i < count( $months ) - 1 && intval( $months[ $i ]->month ) > $month ) {
-			$i ++;
-		}
-
-		if ( $months[ $i ]->month == $month ) {
-			return $i;
-		} // find on position $i
-		return - 1; // not found
-	} else {
-		return - 1;
-	} // not found
-}
-
-function arcw_sortMonths( &$data ) {
-	usort( $data, "arcw_compare_months" );
-}
-
-function arcw_compare_months( $a, $b ) {
-	if ( $a->year == $b->year ) {
-		return $a->month < $b->month ? 1 : - 1;
-	}
-
-	return $a->year < $b->year ? 1 : - 1;
 }

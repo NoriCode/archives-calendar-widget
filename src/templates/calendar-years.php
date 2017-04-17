@@ -8,7 +8,7 @@ foreach ( $arcw->dates as $year => $months ):
 	$active = ( $year == $arcw->activeDate->year );
 
 	?>
-	<div class="year <?php echo $year ?> <?php echo $active ? 'current' : '' ?>">
+	<div class="page year <?php echo $year ?> <?php echo $active ? 'active' : '' ?>">
 		<?php
 		for ( $monthNum = 1; $monthNum <= 12; $monthNum ++ ):
 

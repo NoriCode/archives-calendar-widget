@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.0-beta
+* FULL widget REWRITE: introduces ARCW.Class with commented code for easier maintenance
+* No more jQuery required, full REWRITE in Vanilla JS
+* CSS animations only, no more JS animations
+* Some HTML structure changes. Breaking changes for generated themes v1.0.x
+* Plugin settings simplification as jQuery is not required any more
+
 ## 1.0.12
 * [fix] fix the today date timezone: use `current_time` wp method
 
