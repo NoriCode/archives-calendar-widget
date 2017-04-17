@@ -9,9 +9,9 @@ $nbPages    = count( $navigation );
 ?>
 
 <?php if ( $nbPages > 1 ) : ?>
-	<a href="" class="prev-year">
+	<span class="prev-year" data-nav="prev">
 		<span><?php echo html_entity_decode( $arcw->config['prev_text'] ) ?></span>
-	</a>
+	</span>
 <?php endif ?>
 
 
@@ -23,10 +23,8 @@ $nbPages    = count( $navigation );
 			<?php
 			foreach ( $navigation as $nav ) {
 				?>
-				<li>
-				<span data-href="<?php echo $nav['url'] ?>"
-					  data-date="<?php echo $nav['year'] . '-' . $nav['month'] ?>"
-					<?php echo $nav['active'] ? 'class="current"' : '' ?>>
+				<li class="<?php echo $nav['active'] ? 'current' : '' ?>">
+				<span data-href="<?php echo $nav['url'] ?>">
 					<?php echo $nav['title']; ?>
 				</span>
 				</li>
@@ -40,13 +38,12 @@ $nbPages    = count( $navigation );
 				<span>&#x25bc;</span>
 			</div>
 		<?php endif ?>
-
 	</div>
 
 <?php if ( $nbPages > 1 ): ?>
-	<a href="" class="next-year">
+	<span class="next-year" data-nav="next">
 		<span><?php echo html_entity_decode( $arcw->config['next_text'] ) ?></span>
-	</a>
+	</span>
 <?php endif;
 
 /*
@@ -67,8 +64,6 @@ function headerTite() {
 		}
 	} else {
 		$title = $arcw->activeDate->year;
-
-		print_r($arcw->activeDate);
 
 		if ( $arcw->config['disable_title_link'] == false ) {
 			$href = get_year_link( $arcw->activeDate->year );

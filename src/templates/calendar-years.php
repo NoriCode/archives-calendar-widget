@@ -3,50 +3,62 @@
  * @global Arcw $arcw
  * @global WP_Locale $wp_locale
  */
-foreach ( $arcw->dates as $months ):
-	print_r($date);
-//	if($this->archiveYear && $this->archiveYear == $year['year']){
-//		$current = "current";
-//	}
-//	$current = $index === 0 ? "current" : ""
-//	?>
-<!--	<div class="year --><?php //echo $year['year']; echo " $current" ?><!--" rel="--><?php //echo $index ?><!--">-->
-<!--		--><?php
-//		for ( $i = 0; $i < count( $year["months"] ); $i ++ ):
-//			$month = $year["months"][ $i ];
-//
-//			?>
-<!--			<div class="month --><?php //echo $month['url'] ? "has-posts" : "" ?><!--">-->
-<!--				--><?php //if ( $month['url'] ) : ?>
-<!--				<a href="--><?php //echo $month['url'] ?><!--" title="--><?php //echo $month['full_date'] ?><!--"-->
-<!--				   data-date="--><?php //echo $year['year'] . '-' . $month['month'] ?><!--">-->
-<!--					--><?php //endif; ?>
-<!--					<span class="month-name">-->
-<!--						--><?php //echo $month['name'] ?>
-<!--					</span>-->
-<!---->
-<!--					--><?php //if ( $this->config['post_count'] ) {
-//						postCountTmpl( $month );
-//					} ?>
-<!---->
-<!--					--><?php //if ( $month['url'] ) : ?>
-<!--				</a>-->
-<!--			--><?php //endif; ?>
-<!--			</div>-->
-<!--		--><?php //endfor ?>
-<!--	</div>-->
+foreach ( $arcw->dates as $year => $months ):
+
+	$active = ( $year == $arcw->activeDate->year );
+
+	?>
+	<div class="year <?php echo $year ?> <?php echo $active ? 'current' : '' ?>">
+		<?php
+		for ( $monthNum = 1; $monthNum <= 12; $monthNum ++ ):
+
+
+			if ( array_key_exists( $monthNum, $months ) ) {
+				$month = array(
+					"url" => $arcw->filter_link( get_month_link( $year, $monthNum ) )
+				);
+			} else {
+				$month['url'] = null;
+			}
+
+			$month['name'] = $wp_locale->get_month_abbrev( $wp_locale->get_month( $monthNum ) );
+
+			?>
+			<div class="month <?php echo $month['url'] ? "has-posts" : "" ?>">
+				<?php if ( $month['url'] ) : ?>
+				<a href="<?php echo $month['url']?>"
+				   title="<?php echo $month['full_date']?>"
+				   data-date="<?php echo $year['year'] . '-' . $monthNum ?>">
+				<?php endif; ?>
+					<span class="month-name">
+						<?php echo $month['name'] ?>
+					</span>
+
+					<?php posts_count( $year, $monthNum ); ?>
+
+				<?php if ( $month['url'] ) : ?>
+				</a>
+				<?php endif; ?>
+			</div>
+		<?php endfor ?>
+	</div>
 	<?php
 endforeach;
 
-function postCountTmpl( $item ) {
-	?>
-	<span class="postcount">
+function posts_count( $year, $month ) {
+	global $arcw;
+
+	if ( $arcw->config['post_count'] ) {
+		$count = $arcw->get_post_count( $year, $month );
+		?>
+		<span class="postcount">
 			<span class="count-number">
-				<?php echo $item['post_count'] ?>
+				<?php echo $count ?>
 			</span>
 			<span class="count-text">
-				<?php echo _n( 'Post', 'Posts', $item['post_count'] ); ?>
+				<?php echo _n( 'Post', 'Posts', $count ); ?>
 			</span>
 		</span>
-	<?php
+		<?php
+	}
 }
