@@ -125,6 +125,9 @@ ARCW.prototype.setNavigationTitle = function(){
 /**
  * Navigates through different pages of the calendar
  * "next"/"prev" for nav arrows OR a Number of the page when selecting it from menu
+ * NOTE: next button should go to the most recent calendar, back button should go back in time
+ *       as the most recent item is 0 index and the oldest is in the end of the list
+ *       we need to invert the count of the next/prev buttons
  * @param {"next"|"prev"|int} destination
  */
 ARCW.prototype.goToPage = function (destination) {
@@ -139,8 +142,8 @@ ARCW.prototype.goToPage = function (destination) {
 	// first we set the active variable to the right value
 	if (typeof destination === "string") {
 		switch (destination) {
-			case 'prev':
-				// if the active page is 0
+			case 'next':
+				// if the active page is 0 (most recent)
 				if (self.active === 0) {
 					// we have nothing to do
 					return;
@@ -149,8 +152,8 @@ ARCW.prototype.goToPage = function (destination) {
 				goto = self.active - 1;
 
 				break;
-			case 'next':
-				// if the active page is 0
+			case 'prev':
+				// if the active page is last one (the oldest)
 				if (self.active === (self.navItems.length - 1)) {
 					// we have nothing to do
 					return;
@@ -209,10 +212,10 @@ ARCW.prototype.toggleMenu = function () {
  */
 ARCW.prototype.toggleDisableNav = function () {
 	var self = this;
-	// disable Prev button when active page is 0
-	self.nav.prev.disabled = (self.active === 0);
-	// disable Next button when active page is the last page
-	self.nav.next.disabled = (self.active === (self.navItems.length - 1));
+	// disable Next button when active page is 0 (most recent)
+	self.nav.next.disabled = (self.active === 0);
+	// disable prev button when active page is the last page (the oldest)
+	self.nav.prev.disabled = (self.active === (self.navItems.length - 1));
 
 };
 
