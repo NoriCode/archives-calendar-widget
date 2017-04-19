@@ -2,11 +2,11 @@
  *  This Script is part of the WordPress plugin "Archives Calendar Widget"
  *  Copyright (C) 2013-2017  Aleksei Polechin (http://alek.be)
  *
- *  Before the version 2.x.x ARCW was using jQuery for navigating between different calendars
+ *  Before the version 2.x.x ARCW was using jQuery for navigating different calendar pages
  *  but there were often issues with some WP configuration where jQuery wasn't loaded before ARCW js plugin.
  *
  *  This is written in Vanilla JS to be library dependant and reduce issues with JS loading and just for cleaner code
- *  and because jQuery is not that good.
+ *  and because jQuery is not always good. Less code than with jQuery before :D
  *
  *  No JS animations CSS does it well.
  */
@@ -79,44 +79,48 @@ ARCW.prototype.getActiveElementIndex = function () {
 ARCW.prototype.addClickListeners = function () {
 	var self = this;
 	// navigation buttons prev/next
-	this.navButtons.forEach(function (element) {
-		element.addEventListener("click", function (event) {
-			self.goToPage(element.dataset.nav);
-
-			// TODO: should set the tile of the header to the title of the next/prev item
-			self.setNavigationTitle();
-
-		}, false);
-	});
+	for (var i = 0; i < self.navButtons.length; i++) {
+		// need to add the listener with the value i for element i
+		// so pass the i to an auto executable function
+		(function (index) {
+			var element = self.navButtons[index];
+			element.addEventListener("click", function () {
+				self.goToPage(element.getAttribute('data-nav'));
+				self.setNavigationTitle();
+			}, false);
+		})(i);
+	}
 
 	// menu items
-	this.navItems.forEach(function (element, index) {
-		element.addEventListener("click", function (event) {
-			self.goToPage(index);
-			self.toggleMenu();
-			// TODO: should set the tile of the header to the title of the clicked item
-			self.setNavigationTitle();
-
-		}, false);
-	});
+	for (var j = 0; j < self.navItems.length; j++) {
+		(function (index) {
+			var element = self.navItems[index];
+			element.addEventListener("click", function () {
+				self.goToPage(index);
+				self.toggleMenu();
+				self.setNavigationTitle();
+			}, false);
+		})(j);
+	}
 
 	// menu toggle
-	this.nav.toggle.addEventListener("click", function (event) {
+	this.nav.toggle.addEventListener("click", function () {
 		self.toggleMenu();
 	}, false);
 
 };
 
+
 /**
  * get the title of the active nav item and put it into the navigation bar title
  */
-ARCW.prototype.setNavigationTitle = function(){
+ARCW.prototype.setNavigationTitle = function () {
 	var self = this;
 	var navItem = self.navItems[self.active];
 	self.title.innerText = navItem.innerText.trim();
 	// set the href of the title if title link is not disabled
-	if(self.title.tagName === "A"){
-		self.title.setAttribute("href", navItem.dataset.href);
+	if (self.title.tagName === "A") {
+		self.title.setAttribute("href", navItem.getAttribute('data-href'));
 	}
 
 };
@@ -168,6 +172,10 @@ ARCW.prototype.goToPage = function (destination) {
 		goto = destination;
 	}
 
+	if (goto === self.active) {
+		return;
+	}
+
 	// then we need to switch the classes from the active element to the one we want to go to
 	self.navItems[self.active].classList.remove("active");
 	self.navItems[goto].classList.add("active");
@@ -191,7 +199,7 @@ ARCW.prototype.toggleMenu = function () {
 
 	if (opened) {
 		// add `opened` class and mouse event listeners
-		var menu =self.nav.menu;
+		var menu = self.nav.menu;
 		menu.classList.remove('opened');
 		menu.removeEventListener("mouseleave", self.menuMouseLeaveEvent);
 		menu.removeEventListener("mouseenter", self.menuMouseEnterEvent);
@@ -219,8 +227,18 @@ ARCW.prototype.toggleDisableNav = function () {
 
 };
 
-var calendar;
-document.addEventListener("DOMContentLoaded", function (event) {
-	var cal = document.querySelector('.calendar-archives');
-	calendar = new ARCW(cal);
-});
+
+/**
+ * On DOM content loaded initialize ARCW js for each calendar present on the page
+ */
+var onDomContentLoaded = function(){
+	// get all the calendars on the page
+	var calendars = document.querySelectorAll('.calendar-archives');
+	// for each calendar create the ARCW instance
+	for(var i = 0; i < calendars.length; i++){
+		new ARCW(calendars[i]);
+	}
+	// once the event is fired remove the listener
+	document.removeEventListener("DOMContentLoaded", onDomContentLoaded);
+};
+document.addEventListener("DOMContentLoaded", onDomContentLoaded);

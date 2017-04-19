@@ -15,7 +15,10 @@ module.exports = function (grunt) {
 		'<%= paths.dist %>/admin/js/admin.js': ['<%= paths.src %>/admin/scripts/admin.js'],
 		'<%= paths.dist %>/admin/js/themer.js': ['<%= paths.src %>/admin/scripts/themer.js'],
 		'<%= paths.dist %>/admin/js/widgets-page.js': ['<%= paths.src %>/admin/scripts/widgets-page.js'],
-		'<%= paths.dist %>/admin/js/arcw.js': ['<%= paths.src %>/admin/scripts/arcw.js']
+		'<%= paths.dist %>/admin/js/arcw.js': [
+			'<%= paths.src %>/admin/scripts/polyfills.js',
+			'<%= paths.src %>/admin/scripts/arcw.js'
+		]
 	};
 
 	grunt.initConfig({
@@ -47,7 +50,7 @@ module.exports = function (grunt) {
 			},
 			scripts: {
 				files: ['<%= paths.src %>/admin/scripts/{,**/}*.js'],
-				tasks: ['concat']
+				tasks: ['uglify']
 			},
 			livereload: {
 				options: {livereload: false},
@@ -81,12 +84,6 @@ module.exports = function (grunt) {
 					environment: 'production',
 					outputStyle: 'compressed'
 				}
-			}
-		},
-
-		concat: {
-			js: {
-				files: jsFiles
 			}
 		},
 
@@ -216,7 +213,7 @@ module.exports = function (grunt) {
 	grunt.registerTask('serve', [
 		'compass:dev',
 		'clean:js',
-		'concat',
+		'uglify',
 		'newer:copy:release',
 		'replace:version',
 		'watch'
