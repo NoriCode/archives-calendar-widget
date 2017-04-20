@@ -11,8 +11,8 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "bootstrap-sass": "^3.x.x"
   },
   "devDependencies": {
+    "bootstrap-sass": "^3.x.x"
   }
 }
