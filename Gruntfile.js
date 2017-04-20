@@ -11,11 +11,20 @@ module.exports = function (grunt) {
 	var packages = grunt.file.readJSON('package.json'),
 		changelog = grunt.file.read('CHANGELOG.md');
 
-	var jsFiles = {
+	var jsFilesRelease = {
 		'<%= paths.dist %>/admin/js/admin.js': ['<%= paths.src %>/admin/scripts/admin.js'],
 		'<%= paths.dist %>/admin/js/themer.js': ['<%= paths.src %>/admin/scripts/themer.js'],
 		'<%= paths.dist %>/admin/js/widgets-page.js': ['<%= paths.src %>/admin/scripts/widgets-page.js'],
 		'<%= paths.dist %>/admin/js/arcw.js': [
+			'<%= paths.src %>/admin/scripts/polyfills.js',
+			'<%= paths.src %>/admin/scripts/arcw.js'
+		]
+	};
+	var jsFilesDev = {
+		'<%= paths.dev %>/admin/js/admin.js': ['<%= paths.src %>/admin/scripts/admin.js'],
+		'<%= paths.dev %>/admin/js/themer.js': ['<%= paths.src %>/admin/scripts/themer.js'],
+		'<%= paths.dev %>/admin/js/widgets-page.js': ['<%= paths.src %>/admin/scripts/widgets-page.js'],
+		'<%= paths.dev %>/admin/js/arcw.js': [
 			'<%= paths.src %>/admin/scripts/polyfills.js',
 			'<%= paths.src %>/admin/scripts/arcw.js'
 		]
@@ -29,6 +38,7 @@ module.exports = function (grunt) {
 		paths: {
 			src: "src",
 			dist: "dist",
+			dev: "dev",
 			sass: "src/admin/scss",
 			themes: "src/themes/scss"
 		},
@@ -46,11 +56,11 @@ module.exports = function (grunt) {
 
 			files: {
 				files: ['<%= paths.src %>/**/*.{png,svg,jpg,php,txt,css,mo}'],
-				tasks: ['newer:copy:release']
+				tasks: ['newer:copy:dev']
 			},
 			scripts: {
 				files: ['<%= paths.src %>/admin/scripts/{,**/}*.js'],
-				tasks: ['uglify']
+				tasks: ['uglify:dev']
 			},
 			livereload: {
 				options: {livereload: false},
@@ -66,10 +76,19 @@ module.exports = function (grunt) {
 			dev: {
 				options: {
 					sassDir: '<%= paths.sass %>',
-					cssDir: '<%= paths.dist %>/admin/css/'
+					cssDir: '<%= paths.dev %>/admin/css/',
+					sourcemap: true
 				}
 			},
-			dist: {
+			themes: {
+				options: {
+					sassDir: '<%= paths.themes %>',
+					cssDir: '<%= paths.dev %>/themes/',
+					sourcemap: true
+				}
+			},
+
+			release: {
 				options: {
 					sassDir: '<%= paths.sass %>',
 					cssDir: '<%= paths.dist %>/admin/css/',
@@ -77,7 +96,7 @@ module.exports = function (grunt) {
 					outputStyle: 'compressed'
 				}
 			},
-			themes: {
+			releaseThemes: {
 				options: {
 					sassDir: '<%= paths.themes %>',
 					cssDir: '<%= paths.dist %>/themes/',
@@ -88,15 +107,33 @@ module.exports = function (grunt) {
 		},
 
 		uglify: {
-			options: {
-				mangle: true
+			release: {
+				options: {
+					mangle: true
+				},
+				files: jsFilesRelease
 			},
-			scripts: {
-				files: jsFiles
+			dev: {
+				options: {
+					compress: false,
+					sourceMapIncludeSources: true,
+					sourceMap: true,
+				},
+				files: jsFilesDev
 			}
 		},
 
 		copy: {
+			dev: {
+				expand: true,
+				cwd: '<%= paths.src %>/',
+				src: [
+					'**/*.*',
+					'!admin/scripts/**',
+					'!admin/scss/**'
+				],
+				dest: '<%= paths.dev %>/'
+			},
 			release: {
 				expand: true,
 				cwd: '<%= paths.src %>/',
@@ -161,6 +198,25 @@ module.exports = function (grunt) {
 					}
 				]
 			},
+			devVersion: {
+				options: {
+					patterns: [
+						{
+							match: "version",
+							replacement: "<%= packages.version %>"
+						}
+					]
+				},
+				files: [
+					{
+						expand: true,
+						flatten: true,
+						cwd: '<%= paths.dev %>/',
+						src: ['*.{php,txt}'],
+						dest: '<%= paths.dev %>'
+					}
+				]
+			},
 			changelog: {
 				options: {
 					patterns: [{
@@ -200,34 +256,33 @@ module.exports = function (grunt) {
 
 
 		clean: {
-			dist: ['<%= paths.dist %>'],
-			js: ['<%= paths.dist %>/admin/js/*.js']
+			dev: ['<%= paths.dev %>/admin/js/*.js'],
+			release: ['<%= paths.dist %>']
 		}
 
 	});
 
 	grunt.registerTask('default', '', function () {
-		grunt.fatal('Use "serve", "build" or "release" tasks');
+		grunt.fatal('Use "serve" or "release" tasks');
 	});
 
 	grunt.registerTask('serve', [
+		'clean:dev',
 		'compass:dev',
-		'clean:js',
-		'uglify',
-		'newer:copy:release',
-		'replace:version',
+		'compass:themes',
+		'uglify:dev',
+		'newer:copy:dev',
+		'replace:devVersion',
 		'watch'
 	]);
 
-
-	grunt.registerTask('build', [
-		'clean:dist',
-		'compass:dist',
-		'compass:themes',
-		'uglify',
+	grunt.registerTask('release', [
+		'clean:release',
+		'compass:release',
+		'compass:releaseThemes',
+		'uglify:release',
 		'copy:release',
 		'replace'
 	]);
 
-	grunt.registerTask('release', ['build']);
 };
