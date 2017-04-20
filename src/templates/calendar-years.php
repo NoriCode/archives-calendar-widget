@@ -3,12 +3,13 @@
  * @global Arcw $arcw
  * @global WP_Locale $wp_locale
  */
+$index = count($arcw->dates);
 foreach ( $arcw->dates as $year => $months ):
 
 	$active = ( $year == $arcw->activeDate->year );
 
 	?>
-	<div class="page year <?php echo $year ?> <?php echo $active ? 'active' : '' ?>">
+	<div class="page year <?php echo $year ?> <?php echo $active ? 'active' : '' ?>" style="z-index:<?php echo $index; ?>">
 		<?php
 		for ( $monthNum = 1; $monthNum <= 12; $monthNum ++ ):
 
@@ -43,6 +44,7 @@ foreach ( $arcw->dates as $year => $months ):
 		<?php endfor ?>
 	</div>
 	<?php
+	$index--;
 endforeach;
 
 function posts_count( $year, $month ) {

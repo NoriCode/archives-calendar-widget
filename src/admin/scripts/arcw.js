@@ -18,6 +18,7 @@ var ARCW = function (calendar) {
 	this.navigation = this.calendar.querySelector('.calendar-navigation');
 	this.navButtons = this.navigation.querySelectorAll('[data-nav]');
 	this.title = this.navigation.querySelector('.title');
+	this.pageContainer = this.calendar.querySelector('.archives-years');
 	// Navigation elements
 	this.nav = {
 		prev: this.navigation.querySelector('[data-nav="prev"]'),
@@ -30,6 +31,11 @@ var ARCW = function (calendar) {
 	this.navItems = this.nav.menu.querySelectorAll('.nav-item');
 	// The pages items
 	this.pages = this.calendar.querySelectorAll('.page');
+
+	// add pages index to the element as data-index
+	for (var i = 0; i < this.pages.length; i++) {
+		this.pages[i].setAttribute("data-index", i);
+	}
 
 	// MENU TOGGLE EVENTS
 	var menutimer;
@@ -176,16 +182,65 @@ ARCW.prototype.goToPage = function (destination) {
 		return;
 	}
 
-	// then we need to switch the classes from the active element to the one we want to go to
+	//set navigation menu to the right item
 	self.navItems[self.active].classList.remove("active");
 	self.navItems[goto].classList.add("active");
-	self.pages[self.active].classList.remove("active");
-	self.pages[goto].classList.add("active");
-	//finally update the active variable
-	self.active = goto;
+	// start page switching
+	self.switchPages(goto, self.active);
 	// disable next or prev buttons if needed
 	self.toggleDisableNav();
 
+};
+
+ARCW.prototype.switchPages = function (goto, active) {
+	var self = this;
+
+	var activeElem = self.pages[active],
+		enteringElem = self.pages[goto];
+
+	// activeElem.classList.remove("active");
+	// enteringElem.classList.add("active");
+
+	var nextAnimationEndEvent = function () {
+		self.pageContainer.classList.remove('next');
+
+		enteringElem.classList.add('active');
+		enteringElem.classList.remove('enter');
+		activeElem.classList.remove('active');
+		activeElem.removeEventListener("animationend", nextAnimationEndEvent);
+	};
+	var prevAnimationEndEvent = function () {
+		self.pageContainer.classList.remove('prev');
+
+		enteringElem.classList.add('active');
+		enteringElem.classList.remove('pre-active');
+		activeElem.classList.remove('active');
+		activeElem.classList.remove('leave');
+		activeElem.removeEventListener("animationend", prevAnimationEndEvent);
+	};
+
+	if (active > goto) {
+		// navigating to newer date
+		self.pageContainer.classList.add('next');
+
+		enteringElem.classList.add('enter');
+		enteringElem.addEventListener("animationend", nextAnimationEndEvent, false);
+	}
+	else {
+		// navigating to older date
+		self.pageContainer.classList.add('prev');
+
+		activeElem.classList.add('leave');
+		enteringElem.classList.add('pre-active');
+		activeElem.addEventListener("animationend", prevAnimationEndEvent, false);
+	}
+
+	// then we need to switch the classes from the active element to the one we want to go to
+
+	// activeElem.classList.remove("active");
+	// enteringElem.classList.add("active");
+	//finally update the active variable
+	self.active = goto;
 };
 
 
@@ -195,21 +250,22 @@ ARCW.prototype.goToPage = function (destination) {
 ARCW.prototype.toggleMenu = function () {
 	var self = this;
 	// check if menu is opened
-	var opened = self.nav.menu.classList.contains('opened');
+	var menu = self.nav.menu,
+		opened = menu.classList.contains('opened');
 
 	if (opened) {
 		// add `opened` class and mouse event listeners
-		var menu = self.nav.menu;
 		menu.classList.remove('opened');
 		menu.removeEventListener("mouseleave", self.menuMouseLeaveEvent);
 		menu.removeEventListener("mouseenter", self.menuMouseEnterEvent);
-		// position the menu with active item over the navigation bar
-		menu.style.top = -(self.active * self.navigation.offsetHeight) + "px";
 	} else {
 		// remove `opened` class and mouse event listeners
 		self.nav.menu.classList.add('opened');
 		self.nav.menu.addEventListener("mouseleave", self.menuMouseLeaveEvent, false);
 		self.nav.menu.addEventListener("mouseenter", self.menuMouseEnterEvent, false);
+
+		// position the menu with active item over the navigation bar
+		menu.style.top = -(self.active * self.navigation.offsetHeight) + "px";
 	}
 
 };
@@ -231,11 +287,11 @@ ARCW.prototype.toggleDisableNav = function () {
 /**
  * On DOM content loaded initialize ARCW js for each calendar present on the page
  */
-var onDomContentLoaded = function(){
+var onDomContentLoaded = function () {
 	// get all the calendars on the page
 	var calendars = document.querySelectorAll('.calendar-archives');
 	// for each calendar create the ARCW instance
-	for(var i = 0; i < calendars.length; i++){
+	for (var i = 0; i < calendars.length; i++) {
 		new ARCW(calendars[i]);
 	}
 	// once the event is fired remove the listener

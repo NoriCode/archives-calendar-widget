@@ -3,6 +3,52 @@
 	but should be functional
 **/
 
+$animation-time: .3s;
+.calendar-archives {
+	.page.year {
+		&.enter {
+			animation: arcw-pageenter $animation-time;
+		}
+		&.active, &.pre-active {
+			margin-left: 0;
+		}
+		&.leave {
+			animation: arcw-pageenter $animation-time reverse;
+		}
+	}
+
+	.archives-years {
+		&.next {
+			.active {
+				animation: arcw-pageopacity $animation-time reverse ease-in;
+			}
+		}
+		&.prev {
+			.pre-active {
+				animation: arcw-pageopacity $animation-time ease-in;
+			}
+		}
+	}
+}
+
+@keyframes arcw-pageenter {
+	from {
+		margin-left: -100%;
+	}
+	to {
+		margin-left: 0;
+	}
+}
+
+@keyframes arcw-pageopacity {
+	from {
+		opacity: .3;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
 .calendar-archives {
 	position: relative; // DO NOT CHANGE
 	width: 100%; // DO NOT CHANGE
