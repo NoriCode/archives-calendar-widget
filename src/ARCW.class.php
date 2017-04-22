@@ -429,6 +429,7 @@ class ARCW {
 		$attr .= $attr != '' ? '/' : '';
 		$attr .= implode( '/', $this->config['categories'] );
 
+		// TODO: remove this code when not needed anymore
 		/* old format
 		$params = array( 'arcf' => '' );
 		$attr   = &$params['arcf'];
@@ -441,7 +442,29 @@ class ARCW {
 		}
 		*/
 
-		return update_url_params( $url, $params );
+		return $this->update_url_params( $url, $params );
+	}
+
+	/**
+	 * Add provided parameters to the url get params
+	 * @param $url
+	 * @param array $addparams
+	 *
+	 * @return string - transformed url
+	 */
+	private function update_url_params( $url, $addparams = array() ) {
+		$url_parts = parse_url( $url );
+		$params    = array();
+
+		if ( isset( $url_parts['query'] ) ) {
+			parse_str( $url_parts['query'], $params );
+		}
+
+		$params = array_merge( $params, $addparams );
+
+		$url_parts['query'] = urldecode( http_build_query( $params ) );
+
+		return $url_parts['scheme'] . '://' . $url_parts['host'] . $url_parts['path'] . '?' . $url_parts['query'];
 	}
 
 

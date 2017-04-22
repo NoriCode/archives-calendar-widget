@@ -100,21 +100,6 @@ function arcw_admin_widgets_scripts() {
 	wp_enqueue_style( 'arcw-widget-settings' );
 }
 
-function update_url_params( $url, $addparams = array() ) {
-	$url_parts = parse_url( $url );
-	$params    = array();
-
-	if ( isset( $url_parts['query'] ) ) {
-		parse_str( $url_parts['query'], $params );
-	}
-
-	$params = array_merge( $params, $addparams );
-
-	$url_parts['query'] = urldecode( http_build_query( $params ) );
-
-	return $url_parts['scheme'] . '://' . $url_parts['host'] . $url_parts['path'] . '?' . $url_parts['query'];
-}
-
 // Activate filter in archives page
 if ( isset( $archivesCalendar_options['filter'] ) && $archivesCalendar_options['filter'] == 1 ) {
 	add_action( 'pre_get_posts', 'arcw_filter' );
