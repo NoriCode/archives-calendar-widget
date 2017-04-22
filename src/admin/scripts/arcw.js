@@ -15,10 +15,10 @@ var ARCW = function (calendar) {
 	var self = this;
 	this.calendar = calendar;
 	// Elements declarations on init
-	this.navigation = this.calendar.querySelector('.calendar-navigation');
+	this.navigation = this.calendar.querySelector('.arcw-nav');
 	this.navButtons = this.navigation.querySelectorAll('[data-nav]');
 	this.title = this.navigation.querySelector('.title');
-	this.pageContainer = this.calendar.querySelector('.archives-years');
+	this.pageContainer = this.calendar.querySelector('.arcw-pages');
 	// Navigation elements
 	this.nav = {
 		prev: this.navigation.querySelector('[data-nav="prev"]'),
@@ -192,54 +192,56 @@ ARCW.prototype.goToPage = function (destination) {
 
 };
 
+/**
+ * Manage the CSS3 animation for the page switching
+ * @param goto - page we go to
+ * @param active - current active value
+ */
 ARCW.prototype.switchPages = function (goto, active) {
 	var self = this;
 
 	var activeElem = self.pages[active],
 		enteringElem = self.pages[goto];
 
-	// activeElem.classList.remove("active");
-	// enteringElem.classList.add("active");
-
 	var nextAnimationEndEvent = function () {
-		self.pageContainer.classList.remove('next');
+		var thisElem = event.target;
 
-		enteringElem.classList.add('active');
-		enteringElem.classList.remove('enter');
-		activeElem.classList.remove('active');
-		activeElem.removeEventListener("animationend", nextAnimationEndEvent);
+		activeElem.classList.remove('active', 'leaveFade');
+		thisElem.classList.add('active');
+		thisElem.classList.remove('enter', 'next');
+
+		thisElem.removeEventListener("animationend", nextAnimationEndEvent);
 	};
-	var prevAnimationEndEvent = function () {
-		self.pageContainer.classList.remove('prev');
+	var prevAnimationEndEvent = function (event) {
+		var leavingElem = event.target;
 
-		enteringElem.classList.add('active');
-		enteringElem.classList.remove('pre-active');
-		activeElem.classList.remove('active');
-		activeElem.classList.remove('leave');
-		activeElem.removeEventListener("animationend", prevAnimationEndEvent);
+		var active = self.pages[self.active],
+			thisIndex = leavingElem.getAttribute('data-index'),
+			staticElem = self.pages[parseInt(thisIndex, 10) + 1];
+
+		staticElem.classList.remove('enter', 'prev');
+		leavingElem.classList.remove('leave', 'active');
+		active.classList.add('active');
+
+		thisElem.removeEventListener("animationend", prevAnimationEndEvent);
 	};
 
 	if (active > goto) {
 		// navigating to newer date
-		self.pageContainer.classList.add('next');
+		enteringElem.classList.add('enter', 'next');
+		activeElem.classList.add('leaveFade');
 
-		enteringElem.classList.add('enter');
 		enteringElem.addEventListener("animationend", nextAnimationEndEvent, false);
 	}
 	else {
 		// navigating to older date
-		self.pageContainer.classList.add('prev');
 
 		activeElem.classList.add('leave');
-		enteringElem.classList.add('pre-active');
+		enteringElem.classList.add('enter', 'prev');
+
 		activeElem.addEventListener("animationend", prevAnimationEndEvent, false);
 	}
 
-	// then we need to switch the classes from the active element to the one we want to go to
-
-	// activeElem.classList.remove("active");
-	// enteringElem.classList.add("active");
-	//finally update the active variable
 	self.active = goto;
 };
 

@@ -7,12 +7,12 @@
  */
 ?>
 <!-- Archives Calendar Widget by Aleksei Polechin - alek´ - http://alek.be -->
-<div class="calendar-archives <?php echo $arcw->get_theme() ?>">
+<div class="arcw calendar-archives <?php echo $arcw->get_theme() ?>">
 	<?php // Calendar header/navigation ?>
-	<div class="calendar-navigation">
+	<div class="arcw-nav">
 		<?php include 'header.php'; ?>
 	</div>
-	<div class="archives-years" style="height:300px">
+	<div class="arcw-pages">
 		<?php
 		if($arcw->config['month_view']){
 			include 'calendar-months.php';

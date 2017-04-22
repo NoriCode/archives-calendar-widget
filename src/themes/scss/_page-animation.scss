@@ -1,0 +1,45 @@
+/**
+ * Animation for the page switching
+*/
+
+$animation-time: .4s;
+.arcw-pages {
+	.arcw-page {
+
+		margin-left: 0;
+
+		&.enter {
+			&.next {
+				animation: arcw-pageenter $animation-time ease-in;
+			}
+			&.prev {
+				margin-left: 0;
+				animation: arcw-pageopacity $animation-time*.7 ease-in;
+			}
+		}
+		&.leave, &.leave.prev {
+			animation: arcw-pageenter $animation-time reverse ease-in;
+		}
+		&.leaveFade {
+			animation: arcw-pageopacity $animation-time reverse ease-in;
+		}
+	}
+}
+
+@keyframes arcw-pageenter {
+	from {
+		margin-left: -100%;
+	}
+	to {
+		margin-left: 0;
+	}
+}
+
+@keyframes arcw-pageopacity {
+	from {
+		opacity: .3;
+	}
+	to {
+		opacity: 1;
+	}
+}

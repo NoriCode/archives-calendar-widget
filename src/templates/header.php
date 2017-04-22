@@ -9,7 +9,7 @@ $nbPages    = count( $navigation );
 ?>
 
 <?php if ( $nbPages > 1 ) : ?>
-	<span class="prev-year">
+	<span class="prev-page">
 		<button class="btn-nav" data-nav="prev">
 			<?php echo html_entity_decode( $arcw->config['prev_text'] ) ?>
 		</button>
@@ -38,7 +38,7 @@ $nbPages    = count( $navigation );
 	</div>
 
 <?php if ( $nbPages > 1 ): ?>
-	<span class="next-year">
+	<span class="next-page">
 		<button class="btn-nav" data-nav="next">
 			<?php echo html_entity_decode( $arcw->config['next_text'] ) ?>
 		</button>

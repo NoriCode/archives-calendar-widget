@@ -2,54 +2,10 @@
 	with this file an some variables the calendar will be not very sexy
 	but should be functional
 **/
+@import "nav";
+@import "page-animation";
 
-$animation-time: .3s;
-.calendar-archives {
-	.page.year {
-		&.enter {
-			animation: arcw-pageenter $animation-time;
-		}
-		&.active, &.pre-active {
-			margin-left: 0;
-		}
-		&.leave {
-			animation: arcw-pageenter $animation-time reverse;
-		}
-	}
-
-	.archives-years {
-		&.next {
-			.active {
-				animation: arcw-pageopacity $animation-time reverse ease-in;
-			}
-		}
-		&.prev {
-			.pre-active {
-				animation: arcw-pageopacity $animation-time ease-in;
-			}
-		}
-	}
-}
-
-@keyframes arcw-pageenter {
-	from {
-		margin-left: -100%;
-	}
-	to {
-		margin-left: 0;
-	}
-}
-
-@keyframes arcw-pageopacity {
-	from {
-		opacity: .3;
-	}
-	to {
-		opacity: 1;
-	}
-}
-
-.calendar-archives {
+.arcw {
 	position: relative; // DO NOT CHANGE
 	width: 100%; // DO NOT CHANGE
 	* {
@@ -63,119 +19,36 @@ $animation-time: .3s;
 		}
 	}
 
-	> .calendar-navigation {
-		position: relative;
-		display: table;
-		width: 100%;
-		height: $navigation-height;
+}
 
-		> .prev-year,
-		> .next-year,
-		> .menu-container {
-			position: relative;
-			display: table-cell; // DO NOT CHANGE
-			//height: 100%; // DO NOT CHANGE
-			height: $navigation-height;
-			vertical-align: middle; // DO NOT CHANGE
-		}
+.arcw-pages {
+	position: relative; // DO NOT CHANGE
+	overflow: hidden; // DO NOT CHANGE
 
-		> .prev-year,
-		> .next-year {
-			// reset themes button styling
-			button {
-				display: block;
-				width: 100%;
-				padding: 0;
-				border: 0;
-				border-radius: 0;
-				color: inherit;
-				font-family: inherit;
-				font-weight: inherit;
-				font-style: normal;
-				letter-spacing: 0;
-				line-height: $navigation-height;
-				text-transform: none;
-				background: none;
-				&:disabled {
-					cursor: default !important;
-				}
-			}
-
-			button.btn-nav {
-				cursor: pointer;
-				&.disabled {
-					cursor: default;
-				}
-			}
-		}
-
-		> .menu-container {
-			> .title {
-				display: block;
-				height: $navigation-height;
-				line-height: $navigation-height;
-			}
-			> ul.menu {
-				position: absolute;
-				display: none;
-				width: 100%;
-				top: 0;
-				overflow: hidden;
-				background-color: $menu-bg-color;
-				z-index: 99;
-
-				&.opened {
-					display: block;
-				}
-
-				li {
-					display: block;
-					height: $navigation-height;
-					line-height: $navigation-height;
-				}
-			}
-			> .nav-toggle {
-				position: absolute;
-				top: 0;
-				right: 0;
-				height: $navigation-height;
-				width: $navigation-height;
-				line-height: $navigation-height;
-				font-size: inherit;
-				&:before {
-					content: '▾';
-					font-family: Verdana, Arial, Helvetica, sans-serif;
-					font-size: 110%;
-				}
-			}
-		}
-	}
-
-	> .archives-years {
-		position: relative; // DO NOT CHANGE
-		overflow: hidden; // DO NOT CHANGE
-
+	.arcw-page {
 		// Month/year container. Calendar "pages".
 		// DO NOT CHANGE
-		> .year {
-			position: absolute;
-			top: 0;
-			left: 0;
-			margin-left: -100%;
-			width: 100%;
-			z-index: 0;
-			.year-link {
-				display: none;
-			}
-			&.last {
-				position: relative;
-			}
-			&.active {
-				margin-left: 0;
-				z-index: 1;
-			}
+		position: absolute;
+		top: 0;
+		left: 0;
+		margin-left: -100%;
+		width: 100%;
+		.year-link {
+			display: none;
+		}
+		&.active {
+			margin-left: 0;
+		}
+
+
+		&:last-child {
+			position: relative;
 		}
 	}
+
+}
+
+.arcw {
 
 	.month, .day {
 		position: relative;
