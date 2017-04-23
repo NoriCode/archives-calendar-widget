@@ -3,7 +3,7 @@ $theme-name: 'classicdark';
 @import "mixins/mixins";
 
 /* Base variables */
-@import "variables";
+@import "base/variables";
 /* Customize variables below */
 $preview-background: #111;
 $border-radius: 0px;
@@ -23,12 +23,9 @@ $weekday-text-color: $has-post-text-color;
 $weekdays-bg: #555;
 
 /* Base common CSS : DON'T CHANGE */
-@import "base";
+@import "base/base";
 
 /** CALENDAR NAVIGATION BLOCK (top) **/
 @import "partials/classic_nav";
 
 @import "partials/classic";
-
-
-

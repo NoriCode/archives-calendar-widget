@@ -3,7 +3,7 @@ $theme-name: 'classiclight';
 @import "mixins/mixins";
 
 /* Base variables */
-@import "variables";
+@import "base/variables";
 /* Customize variables below */
 $preview-background: #CFCFCF;
 $border-radius: 0px;
@@ -23,7 +23,7 @@ $weekday-text-color: #333;
 $weekdays-bg: #E6E6E6;
 
 /* Base common CSS : DON'T CHANGE */
-@import "base";
+@import "base/base";
 
 /** CALENDAR NAVIGATION BLOCK (top) **/
 @import "partials/classic_nav";

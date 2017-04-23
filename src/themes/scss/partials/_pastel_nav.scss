@@ -1,136 +1,108 @@
 // Nav buttons Next/Prev
-.calendar-archives.#{$theme-name} .calendar-navigation {
-	/*height: $navigation-height !important;
-	margin-bottom: 1px;
-	border-radius: $border-radius;
-	color: $text-color;
-	background-color: #EF9677;
+.arcw.#{$theme-name} {
 
-	> .prev-year,
-	> .next-year {
-		width: 30px;
+	.arcw-nav {
+		margin-bottom: 1px;
 		border-radius: $border-radius;
-		font-size: 18px;
-		text-align: center;
 		color: $text-color;
+		background-color: #EF9677;
 
-		&:hover {
-			background-color: #86CAE9;
+		.prev-page,
+		.next-page {
+			width: 30px;
+			border-radius: $border-radius;
+			font-size: 18px;
+			text-align: center;
+			color: $text-color;
+		}
+		.prev-page {
+			border-right: 1px #FFF solid;
+		}
+		.next-page {
+			border-left: 1px #FFF solid;
 		}
 
-		&.disabled {
-			opacity: .4;
-			cursor: default;
+		.btn-nav {
 			&:hover {
-				background: none;
+				background-color: #86CAE9;
+			}
+
+			&.disabled {
+				opacity: .4;
+				&:hover {
+					background: none;
+				}
 			}
 		}
+
 	}
 
-	> .prev-year {
-		border-right: 1px #FFF solid;
-	}
-
-	> .next-year {
-		border-left: 1px #FFF solid;
-	}*/
-
-}
-
-// Nav menu
-.calendar-archives.#{$theme-name} .calendar-navigation {
-	/*> .menu-container {
+	.menu-container {
 		position: relative;
-		height: $navigation-height;
 		padding: 0;
 		text-align: center;
 		text-transform: capitalize;
 
 		&:hover {
 			background-color: #EA8462;
-			> .arrow-down {
-
-			}
 		}
+	}
 
-		> a.title {
-			display: block;
-			height: $navigation-height;
-			line-height: $navigation-height;
+	.title {
+		display: block;
+		height: $navigation-height;
+		line-height: $navigation-height;
+		color: $text-color;
+		vertical-align: middle;
+		text-align: center;
+
+		&:hover {
+
+		}
+		&:visited {
+
+		}
+	}
+
+	.menu {
+		left: 0;
+		width: 100%;
+		border: none;
+		box-shadow: 0 0 10px #000;
+		background-color: #FFF;
+	}
+
+	.nav-item {
+		color: #86CAE9;
+
+		&.active,
+		&.active:hover {
 			color: $text-color;
-			vertical-align: middle;
-
-			&:hover {
-
-			}
-			&:visited {
-
-			}
+			text-decoration: none;
+			background-color: #F2C8BA;
 		}
-
-		> ul, > ul > li {
-			margin: 0;
-			padding: 0;
-		}
-
-		> ul.menu {
-			position: absolute;
-			display: none;
-			width: 100%;
-			top: 0;
-			overflow: hidden;
-			border: none;
-			box-shadow: 0 0 10px #000;
-			background-color: #FFF;
-			z-index: 99;
-
-			li {
-					display: block;
-					height: $navigation-height;
-					line-height: $navigation-height;
-					color: #86CAE9;
-					&:hover {
-						background-color: #86CAE9;
-						cursor: pointer;
-						color: #FFF;
-					}
-					&.active {
-						color: $text-color;
-						background-color: #F2C8BA;
-						&:hover {
-							text-decoration: none;
-							cursor: default;
-							background-color: #F2C8BA;
-						}
-					}
-			}
-		}
-
-
-		> .arrow-down {
-			position: absolute;
-			width: 24px;
-			height: $navigation-height;
-			top: 0;
-			right: 0;
-			border-left: 1px solid #EF9677;
-			font-family: Verdana, Arial, Helvetica, sans-serif;
-			color: $text-color;
-			font-size: 9px;
-			line-height: $navigation-height;
+		&:hover {
+			background-color: #86CAE9;
 			cursor: pointer;
-			&:hover {
-				background-color: #86CAE9;
-			}
+			color: #FFF;
 		}
+	}
 
-		&.years {
-
+	.nav-toggle {
+		position: absolute;
+		width: 24px;
+		height: $navigation-height;
+		top: 0;
+		right: 0;
+		border-left: 1px solid #EF9677;
+		font-family: Verdana, Arial, Helvetica, sans-serif;
+		color: $text-color;
+		font-size: 9px;
+		line-height: $navigation-height;
+		cursor: pointer;
+		&:hover {
+			background-color: #86CAE9;
 		}
-
-		&.months {
-
-		}
-	}*/
+	}
 
 }

@@ -3,14 +3,14 @@ $theme-name: 'calendrier';
 @import "mixins/mixins";
 
 /* Base variables */
-@import "variables";
+@import "base/variables";
 /* Customize variables below */
 $preview-background: #FFFFFF;
 $brand-primary: #5ebce5;
 $border-radius: 0px;
 
 /* Base common CSS : DON'T CHANGE */
-@import "base";
+@import "base/base";
 
 /** CALENDAR NAVIGATION BLOCK (top) **/
 @import "partials/calendrier_nav";
@@ -24,7 +24,7 @@ $border-radius: 0px;
 	}
 
 	/** CALENDAR GRID BLOCK **/
-	> .archives-years {
+	.arcw-pages {
 		border: 1px #e6e6e6 solid;
 		border-bottom: none;
 	}

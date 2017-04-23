@@ -3,14 +3,14 @@ $theme-name: 'twentyfourteenlight';
 @import "mixins/mixins";
 
 /* Base variables */
-@import "variables";
+@import "base/variables";
 /* Customize variables below */
 $preview-background: #FFFFFF;
 $brand-primary: #24890d;
 $border-radius: 0px;
 
 /* Base common CSS : DON'T CHANGE */
-@import "base";
+@import "base/base";
 
 /** CALENDAR NAVIGATION BLOCK (top) **/
 @import "partials/twentyfourteenlight_nav";
@@ -21,7 +21,7 @@ $border-radius: 0px;
 	}
 
 	/** CALENDAR GRID BLOCK **/
-	> .archives-years {
+	.arcw-pages {
 		background-color: #FFF;
 	}
 	// Month and Day, common styles

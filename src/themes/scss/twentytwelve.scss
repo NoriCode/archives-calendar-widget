@@ -3,7 +3,7 @@ $theme-name: 'twentytwelve';
 @import "mixins/mixins";
 
 /* Base variables */
-@import "variables";
+@import "base/variables";
 
 /* Customize variables below */
 $preview-background: #FFFFFF;
@@ -13,7 +13,7 @@ $border-radius: 3px;
 $text-color: #757575;
 
 /* Base common CSS : DON'T CHANGE */
-@import "base";
+@import "base/base";
 
 /** CALENDAR NAVIGATION BLOCK (top) **/
 @import "partials/twentytwelve_nav";
@@ -24,7 +24,7 @@ $text-color: #757575;
 	}
 
 	/** CALENDAR GRID BLOCK **/
-	> .archives-years {
+	.arcw-pages {
 		background-color: #FFFFFF;
 	}
 	// Month and Day, common styles
