@@ -126,7 +126,8 @@ class ARCW {
 	 * @return mixed
 	 */
 	function startKey( $array ) {
-		reset($array);
+		reset( $array );
+
 		return key( $array );
 	}
 
@@ -195,30 +196,38 @@ class ARCW {
 
 			// default is displaying the latest available month
 			default:
-				// if we are in archives set the year and the month to the archives ones
-				if ( is_archive() && ! is_category() ) {
-					$year  = intval( date( 'Y', strtotime( $post->post_date ) ) );
-					$month = intval( date( 'm', strtotime( $post->post_date ) ) );
+				$year  = $this->startKey( $this->dates );
+				$month = $this->startKey( $this->dates[ $year ] );
+		}
 
-					// if the month does not exist get the latest available
-					if ( ! array_key_exists( $year, $this->dates ) || ! array_key_exists( $month, $this->dates[ $year ] ) ) {
-						$year  = $this->startKey( $this->dates );
-						$month = $this->startKey( $this->dates[ $year ] );
-					}
-				} else {
-					$year  = $this->startKey( $this->dates );
-					$month = $this->startKey( $this->dates[ $year ] );
-				}
+		// if we are in archives set the year and the month to the archives ones
+		if ( is_archive() && ! is_category() ) {
+			$year  = intval( date( 'Y', strtotime( $post->post_date ) ) );
+			$month = intval( date( 'm', strtotime( $post->post_date ) ) );
 		}
 
 		// check if month exists in dates, if not add one empty
 		$this->month_exists_or_add( $year, $month );
+
+		// reorder months
+		$this->sort_months();
 
 		//set the final active date
 		$activeDate->year  = $year;
 		$activeDate->month = $month;
 
 		return $activeDate;
+	}
+
+	/**
+	 * The months in the year are sorted in the natural order by default
+	 * but in the calendar we want to show from the newest to the oldest
+	 * => inverse the order of the array
+	 */
+	private function sort_months() {
+		foreach ( $this->dates as $index => $date ) {
+			$this->dates[ $index ] = array_reverse( $date, true );
+		}
 	}
 
 	/**
@@ -348,6 +357,35 @@ class ARCW {
 
 
 	/**
+	 * Return the number of days in a specified month
+	 * Taking leap years into account
+	 *
+	 * @param $year
+	 * @param $month
+	 *
+	 * @return int
+	 */
+	public function get_month_days( $year, $month ) {
+		switch ( intval( $month ) ) {
+			case 4:
+			case 6:
+			case 9:
+			case 11: // april, june, september, november
+				return 30; // 30 days
+			case 2: //february
+				if ( $year % 400 == 0 || ( $year % 100 != 00 && $year % 4 == 0 ) ) // leap year check
+				{
+					return 29;
+				} // 29 days or
+
+				return 28; // 28 days
+			default: // other months
+				return 31; // 31 days
+		}
+	}
+
+
+	/**
 	 * Get full list of years and months for the "year view" template
 	 * All months of the year are present but only the ones with posts has `url != null` property
 	 * @return array|null|object
@@ -447,6 +485,7 @@ class ARCW {
 
 	/**
 	 * Add provided parameters to the url get params
+	 *
 	 * @param $url
 	 * @param array $addparams
 	 *
