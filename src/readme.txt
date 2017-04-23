@@ -32,7 +32,7 @@ I'm alone to test this plugin before release and I can't test everything with pa
 * Custom post_type partial* support
 * Entirely customizable with CSS
 * .PO/.MO Localisation English/Français + OUTDATED: [Deutsch, Español, Portugues, Simplified Chinese, Serbo-Croatian]
-* CSS animations
+* CSS animations (IE10+)
 
 **Custom taxonomies are not supported. If your custom post_type post has no common categories with post it will not be shown in the archives**
 

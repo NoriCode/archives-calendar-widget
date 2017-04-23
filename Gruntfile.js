@@ -16,6 +16,7 @@ module.exports = function (grunt) {
 		'<%= paths.dist %>/admin/js/themer.js': ['<%= paths.src %>/admin/scripts/themer.js'],
 		'<%= paths.dist %>/admin/js/widgets-page.js': ['<%= paths.src %>/admin/scripts/widgets-page.js'],
 		'<%= paths.dist %>/admin/js/arcw.js': [
+			'<%= paths.src %>/admin/scripts/modernizr.js',
 			'<%= paths.src %>/admin/scripts/polyfills.js',
 			'<%= paths.src %>/admin/scripts/arcw.js'
 		]
@@ -25,6 +26,7 @@ module.exports = function (grunt) {
 		'<%= paths.dev %>/admin/js/themer.js': ['<%= paths.src %>/admin/scripts/themer.js'],
 		'<%= paths.dev %>/admin/js/widgets-page.js': ['<%= paths.src %>/admin/scripts/widgets-page.js'],
 		'<%= paths.dev %>/admin/js/arcw.js': [
+			'<%= paths.src %>/admin/scripts/modernizr.js',
 			'<%= paths.src %>/admin/scripts/polyfills.js',
 			'<%= paths.src %>/admin/scripts/arcw.js'
 		]

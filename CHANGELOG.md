@@ -3,7 +3,7 @@
 ## 2.0.0-beta
 * FULL widget REWRITE: introduces ARCW.Class with commented code for easier maintenance
 * No more jQuery required, full REWRITE in Vanilla JS
-* CSS animations only, no more JS animations
+* CSS animations only, no more JS animations (IE10+)
 * Some HTML structure changes. Breaking changes for generated themes v1.0.x
 * Plugin settings simplification as jQuery is not required any more
 
