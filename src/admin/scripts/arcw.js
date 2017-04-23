@@ -30,7 +30,7 @@ var ARCW = function (calendar) {
 	// The menu items
 	this.navItems = this.nav.menu.querySelectorAll('.nav-item');
 	// The pages items
-	this.pages = this.calendar.querySelectorAll('.page');
+	this.pages = this.pageContainer.querySelectorAll('.arcw-page');
 
 	// add pages index to the element as data-index
 	for (var i = 0; i < this.pages.length; i++) {
@@ -185,8 +185,17 @@ ARCW.prototype.goToPage = function (destination) {
 	//set navigation menu to the right item
 	self.navItems[self.active].classList.remove("active");
 	self.navItems[goto].classList.add("active");
-	// start page switching
-	self.switchPages(goto, self.active);
+	// start page switching if supported
+	if (Modernizr.csstransitions) {
+		// if transitions are supported use animations
+		self.switchPages(goto, self.active);
+	}
+	else {
+		// IE <= 9
+		self.pages[self.active].classList.remove('active');
+		self.pages[goto].classList.add('active');
+	}
+	self.active = goto;
 	// disable next or prev buttons if needed
 	self.toggleDisableNav();
 
@@ -200,49 +209,49 @@ ARCW.prototype.goToPage = function (destination) {
 ARCW.prototype.switchPages = function (goto, active) {
 	var self = this;
 
-	var activeElem = self.pages[active],
-		enteringElem = self.pages[goto];
+	var gotoElem = self.pages[goto],
+		activeElem = self.pages[active];
 
-	var nextAnimationEndEvent = function () {
-		var thisElem = event.target;
+	var nextAnimationEndEvent = function (event) {
+		activeElem.classList.remove('leaveFade');
+		activeElem.classList.remove('active');
 
-		activeElem.classList.remove('active', 'leaveFade');
-		thisElem.classList.add('active');
-		thisElem.classList.remove('enter', 'next');
+		gotoElem.classList.add('active');
+		gotoElem.classList.remove('next');
+		gotoElem.classList.remove('enter');
 
-		thisElem.removeEventListener("animationend", nextAnimationEndEvent);
+		gotoElem.removeEventListener("transitionend", nextAnimationEndEvent);
 	};
 	var prevAnimationEndEvent = function (event) {
-		var leavingElem = event.target;
-
-		var active = self.pages[self.active],
-			thisIndex = leavingElem.getAttribute('data-index'),
+		var	thisIndex = activeElem.getAttribute('data-index'),
 			staticElem = self.pages[parseInt(thisIndex, 10) + 1];
 
-		staticElem.classList.remove('enter', 'prev');
-		leavingElem.classList.remove('leave', 'active');
-		active.classList.add('active');
+		staticElem.classList.remove('prev');
+		staticElem.classList.remove('enter');
 
-		thisElem.removeEventListener("animationend", prevAnimationEndEvent);
+		activeElem.classList.remove('active');
+		activeElem.classList.remove('leave');
+		gotoElem.classList.add('active');
+
+		activeElem.removeEventListener("transitionend", prevAnimationEndEvent);
 	};
 
 	if (active > goto) {
-		// navigating to newer date
-		enteringElem.classList.add('enter', 'next');
-		activeElem.classList.add('leaveFade');
+		// NEXT navigating to newer date
+		gotoElem.addEventListener("transitionend", nextAnimationEndEvent, false);
 
-		enteringElem.addEventListener("animationend", nextAnimationEndEvent, false);
+		gotoElem.classList.add('enter');
+		gotoElem.classList.add('next');
+		activeElem.classList.add('leaveFade');
 	}
 	else {
-		// navigating to older date
+		// PREV navigating to older date
+		activeElem.addEventListener("transitionend", prevAnimationEndEvent, false);
 
+		gotoElem.classList.add('enter');
+		gotoElem.classList.add('prev');
 		activeElem.classList.add('leave');
-		enteringElem.classList.add('enter', 'prev');
-
-		activeElem.addEventListener("animationend", prevAnimationEndEvent, false);
 	}
-
-	self.active = goto;
 };
 
 
@@ -279,9 +288,19 @@ ARCW.prototype.toggleMenu = function () {
 ARCW.prototype.toggleDisableNav = function () {
 	var self = this;
 	// disable Next button when active page is 0 (most recent)
-	self.nav.next.disabled = (self.active === 0);
+	if(self.active === 0){
+		self.nav.next.classList.add('disabled');
+	}
+	else {
+		self.nav.next.classList.remove('disabled');
+	}
 	// disable prev button when active page is the last page (the oldest)
-	self.nav.prev.disabled = (self.active === (self.navItems.length - 1));
+	if(self.active === (self.navItems.length - 1)){
+		self.nav.prev.classList.add('disabled');
+	}
+	else {
+		self.nav.prev.classList.remove('disabled');
+	}
 
 };
 

@@ -9,11 +9,11 @@ $nbPages    = count( $navigation );
 ?>
 
 <?php if ( $nbPages > 1 ) : ?>
-	<span class="prev-page">
-		<button class="btn-nav" data-nav="prev">
+	<div class="prev-page">
+		<div class="btn-nav" data-nav="prev">
 			<?php echo html_entity_decode( $arcw->config['prev_text'] ) ?>
-		</button>
-	</span>
+		</div>
+	</div>
 <?php endif ?>
 
 
@@ -32,17 +32,16 @@ $nbPages    = count( $navigation );
 		</ul>
 
 		<?php if ( $nbPages > 1 ): ?>
-<!-- TODO: arrow-down class should be removed, need modification in CSS -->
-			<div class="nav-toggle arrow-down"></div>
+			<div class="nav-toggle"></div>
 		<?php endif ?>
 	</div>
 
 <?php if ( $nbPages > 1 ): ?>
-	<span class="next-page">
-		<button class="btn-nav" data-nav="next">
+	<div class="next-page">
+		<div class="btn-nav" data-nav="next">
 			<?php echo html_entity_decode( $arcw->config['next_text'] ) ?>
-		</button>
-	</span>
+		</div>
+	</div>
 <?php endif;
 
 /*

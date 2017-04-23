@@ -2,25 +2,22 @@
 /**
  * In case calendar.php is included in a function.
  *
- * @global Arcw 		$arcw
- * @global WP_Locale 	$wp_locale
+ * @global Arcw $arcw
+ * @global WP_Locale $wp_locale
  */
 ?>
 <!-- Archives Calendar Widget by Aleksei Polechin - alek´ - http://alek.be -->
 <div class="arcw calendar-archives <?php echo $arcw->get_theme() ?>">
 	<?php // Calendar header/navigation ?>
 	<div class="arcw-nav">
-		<?php include 'header.php'; ?>
+		<?php include 'navigation.php'; ?>
 	</div>
-	<div class="arcw-pages">
-		<?php
-		if($arcw->config['month_view']){
-			include 'calendar-months.php';
-		}
-		else {
-			include 'calendar-years.php';
-		}
-		?>
-	</div>
+	<?php
+	if ( $arcw->config['month_view'] ) {
+		include 'calendar-months.php';
+	} else {
+		include 'calendar-years.php';
+	}
+	?>
 </div>
 <!-- [END] Archives Calendar Widget by Aleksei Polechin - alek´ - http://alek.be -->
