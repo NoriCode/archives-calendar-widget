@@ -5,9 +5,8 @@
 	height: $navigation-height;
 	line-height: $navigation-height;
 
-	.prev-page,
-	.next-page,
-	.menu-container {
+	.arcw-btn-nav,
+	.arcw-menu-container {
 		position: relative;
 		display: table-cell; // DO NOT CHANGE
 		height: $navigation-height;
@@ -15,7 +14,8 @@
 	}
 
 	// nav next/prev buttons
-	.btn-nav {
+	.arcw-btn-nav {
+		width: $navigation-height;
 		height: $navigation-height;
 		text-align: center;
 		line-height: inherit;
@@ -27,14 +27,14 @@
 		}
 	}
 
-	.title {
+	.arcw-title {
 		display: block;
 		height: $navigation-height;
 		text-align: center;
 	}
 
 	// dropdown menu
-	.menu {
+	.arcw-menu {
 		display: none;
 		position: absolute;
 		z-index: 99;
@@ -44,14 +44,14 @@
 		overflow: hidden;
 		background-color: $menu-bg-color;
 
-		&.opened {
+		&.open {
 			display: block;
 		}
 
 	}
 
 	// dropdown menu items
-	.nav-item {
+	.arcw-nav-item {
 		display: block;
 		cursor: pointer;
 		text-align: center;
@@ -65,12 +65,13 @@
 	}
 
 	// drop down menu toggle button
-	.nav-toggle {
+	.arcw-nav-toggle {
 		position: absolute;
 		top: 0;
 		right: 0;
 		height: $navigation-height;
 		width: $navigation-height;
+		text-align: center;
 		font-size: inherit;
 		cursor: pointer;
 		&:before {

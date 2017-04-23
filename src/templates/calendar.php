@@ -5,9 +5,11 @@
  * @global Arcw $arcw
  * @global WP_Locale $wp_locale
  */
+
+require_once 'helpers.php';
 ?>
 <!-- Archives Calendar Widget by Aleksei Polechin - alek´ - http://alek.be -->
-<div class="arcw calendar-archives <?php echo $arcw->get_theme() ?>">
+<div class="arcw calendar-archives  <?php echo $arcw->get_theme() ?>">
 	<?php // Calendar header/navigation ?>
 	<div class="arcw-nav">
 		<?php include 'navigation.php'; ?>

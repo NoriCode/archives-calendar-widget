@@ -17,18 +17,18 @@ var ARCW = function (calendar) {
 	// Elements declarations on init
 	this.navigation = this.calendar.querySelector('.arcw-nav');
 	this.navButtons = this.navigation.querySelectorAll('[data-nav]');
-	this.title = this.navigation.querySelector('.title');
+	this.title = this.navigation.querySelector('.arcw-title');
 	this.pageContainer = this.calendar.querySelector('.arcw-pages');
 	// Navigation elements
 	this.nav = {
 		prev: this.navigation.querySelector('[data-nav="prev"]'),
 		next: this.navigation.querySelector('[data-nav="next"]'),
-		toggle: this.navigation.querySelector('.nav-toggle'),
-		menu: this.navigation.querySelector('.menu')
+		toggle: this.navigation.querySelector('.arcw-nav-toggle'),
+		menu: this.navigation.querySelector('.arcw-menu')
 	};
 
 	// The menu items
-	this.navItems = this.nav.menu.querySelectorAll('.nav-item');
+	this.navItems = this.nav.menu.querySelectorAll('.arcw-nav-item');
 	// The pages items
 	this.pages = this.pageContainer.querySelectorAll('.arcw-page');
 
@@ -262,16 +262,16 @@ ARCW.prototype.toggleMenu = function () {
 	var self = this;
 	// check if menu is opened
 	var menu = self.nav.menu,
-		opened = menu.classList.contains('opened');
+		opened = menu.classList.contains('open');
 
 	if (opened) {
 		// add `opened` class and mouse event listeners
-		menu.classList.remove('opened');
+		menu.classList.remove('open');
 		menu.removeEventListener("mouseleave", self.menuMouseLeaveEvent);
 		menu.removeEventListener("mouseenter", self.menuMouseEnterEvent);
 	} else {
 		// remove `opened` class and mouse event listeners
-		self.nav.menu.classList.add('opened');
+		self.nav.menu.classList.add('open');
 		self.nav.menu.addEventListener("mouseleave", self.menuMouseLeaveEvent, false);
 		self.nav.menu.addEventListener("mouseenter", self.menuMouseEnterEvent, false);
 

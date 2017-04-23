@@ -2,9 +2,10 @@
 	with this file an some variables the calendar will be not very sexy
 	but should be functional
 **/
-@import "nav";
+@import "navigation";
 @import "page-animation";
-@import "pages-years";
+@import "page-year";
+@import "page-month";
 
 .arcw {
 	position: relative; // DO NOT CHANGE
@@ -15,7 +16,8 @@
 
 	a {
 		&:focus,
-		&:active {
+		&:active,
+		&:active:focus{
 			outline: none !important;
 		}
 	}
@@ -32,57 +34,16 @@
 		position: absolute;
 		top: 0;
 		left: 0;
-		margin-left: -100%;
+		display: table;
+		@include translate(-100%, 0);
 		width: 100%;
 		&.active {
-			margin-left: 0;
+			@include translate(0, 0);
 		}
 		&:last-child {
 			position: relative;
 		}
 	}
-
-	.month-page {
-		display: table;
-	}
-
-}
-
-// base for the month/day display
-.arcw {
-	.month {
-		position: relative;
-		overflow: hidden;
-		float: left;
-	}
-
-	.month {
-		width: $month-width;
-		height: $month-height;
-	}
-}
-
-.weekdays {
-	display: table;
-	width: 100%;
-	.weekday {
-
-	}
-}
-
-.week-row {
-	display: table-row;
-	.day {
-		> a {
-			display: block;
-		}
-	}
-}
-
-.weekday, .day {
-	display: table-cell;
-	width: 14.28571428571429% !important;
-	text-align: center;
 }
 
 /* FOR PREVIEW IN CONFIGURATION ONLY */

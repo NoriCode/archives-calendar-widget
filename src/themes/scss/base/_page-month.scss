@@ -1,0 +1,34 @@
+// WEEKDAYS
+.arcw-weekdays {
+	display: table;
+	width: 100%;
+}
+
+// weekday and day box global styling
+.arcw-weekday,
+.arcw-day-box {
+	display: table-cell;
+	width: 14.28571428571429% !important;
+	text-align: center;
+}
+
+// DAYS
+// weekrow
+.arcw-week-row {
+	display: table-row;
+	width: 100%;
+}
+
+// day box
+.arcw-day-box {
+	display: table-cell;
+	&.has-posts {
+
+	}
+	&.empty {
+
+	}
+	> a {
+		display: block;
+	}
+}
