@@ -12,7 +12,7 @@ License: GPLv3
 /***** GPLv3 LICENSE *****
  *
  * Archives Calendar Widget for Wordpress
- * Copyright (C) 2013-2016 Aleksei Polechin (http://alek.be)
+ * Copyright (C) 2013-2017 Aleksei Polechin (http://alek.be)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,10 @@ License: GPLv3
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  ****/
 
-define( 'ARCWV', '@@version' ); // current version of the plugin
-define( 'ARCW_DEBUG', true ); // enable or disable debug (for dev instead of echo or print_r use debug() function)
+// current version of the plugin
+define( 'ARCWV', '@@version' );
+// enable or disable debug (for dev instead of echo or print_r use debug() function)
+define( 'ARCW_DEBUG', true );
 
 $themes = array(
 	'calendrier'          => 'Calendrier',
@@ -54,14 +56,15 @@ add_action( 'wpmu_new_blog', 'archivesCalendar_new_blog', 10, 6 ); // in case of
 add_action( 'init', 'archivesCalendar_init' );
 // ADD setting action link
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'arcw_plugin_action_links' );
-// Register and enqueue Archives Calendar Widjet jQuery plugin
+// Register and enqueue Archives Calendar Widget JS
 add_action( 'wp_enqueue_scripts', 'archivesCalendar_script' );
+
 // Scripts to be included on Widget configuration page
 add_action( 'admin_print_scripts-widgets.php', 'arcw_admin_widgets_scripts' );
 add_action( 'admin_print_scripts-customize.php', 'arcw_admin_widgets_scripts' );
 
-if ( $archivesCalendar_options['css'] == 1 ) // Archives Calendar Widget Themes CSS
-{
+// Archives Calendar Widget Themes CSS
+if ( $archivesCalendar_options['css'] == 1 ) {
 	add_action( 'wp_enqueue_scripts', 'archives_calendar_styles' );
 }
 
@@ -73,6 +76,7 @@ function archivesCalendar_init() {
 	load_plugin_textdomain( 'arwloc', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
 
+/** ADD actions links to the plugin entry in the administration "Plugins" page */
 function arcw_plugin_action_links( $links ) {
 	$links[] = '<a href="' . get_admin_url( null, 'options-general.php?page=Archives_Calendar_Widget' ) . '">' . __( 'Settings' ) . '</a>';
 
@@ -80,19 +84,27 @@ function arcw_plugin_action_links( $links ) {
 }
 
 /**
- * Register and Add the plugin's JavaScript
+ * Register the required front-end JS library in the footer
+ * Without this script you will not be able to change calendar pages
  */
 function archivesCalendar_script() {
-	wp_register_script( 'arcw-script', plugins_url( '/admin/js/arcw.js', __FILE__ ), array(), ARCWV );
+	wp_register_script( 'arcw-script', plugins_url( '/js/arcw.js', __FILE__ ), array(), ARCWV, true );
 	wp_enqueue_script( 'arcw-script' );
 }
 
+/**
+ * Register and enqueue default theme CSS
+ */
 function archives_calendar_styles() {
 	$archivesCalendar_options = get_option( 'archivesCalendar' );
 	wp_register_style( 'archives-cal-' . $archivesCalendar_options['theme'], plugins_url( 'themes/' . $archivesCalendar_options['theme'] . '.css', __FILE__ ), array(), ARCWV );
 	wp_enqueue_style( 'archives-cal-' . $archivesCalendar_options['theme'] );
 }
 
+/**
+ * ADMINISTRATION ONLY
+ * Register and enqueue Scripts required in the Administration (plugin/widget settings)
+ */
 function arcw_admin_widgets_scripts() {
 	wp_register_style( 'arcw-widget-settings', plugins_url( '/admin/css/widget-settings.css', __FILE__ ), array(), ARCWV );
 	wp_register_script( 'arcwpWidgetsPage', plugins_url( '/admin/js/widgets-page.js', __FILE__ ), array(), ARCWV );

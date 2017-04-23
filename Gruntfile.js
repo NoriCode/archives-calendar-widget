@@ -15,20 +15,20 @@ module.exports = function (grunt) {
 		'<%= paths.dist %>/admin/js/admin.js': ['<%= paths.src %>/admin/scripts/admin.js'],
 		'<%= paths.dist %>/admin/js/themer.js': ['<%= paths.src %>/admin/scripts/themer.js'],
 		'<%= paths.dist %>/admin/js/widgets-page.js': ['<%= paths.src %>/admin/scripts/widgets-page.js'],
-		'<%= paths.dist %>/admin/js/arcw.js': [
-			'<%= paths.src %>/admin/scripts/modernizr.js',
-			'<%= paths.src %>/admin/scripts/polyfills.js',
-			'<%= paths.src %>/admin/scripts/arcw.js'
+		'<%= paths.dist %>/js/arcw.js': [
+			'<%= paths.src %>/scripts/lib/modernizr.js',
+			'<%= paths.src %>/scripts/lib/polyfills.js',
+			'<%= paths.src %>/scripts/arcw.js'
 		]
 	};
 	var jsFilesDev = {
 		'<%= paths.dev %>/admin/js/admin.js': ['<%= paths.src %>/admin/scripts/admin.js'],
 		'<%= paths.dev %>/admin/js/themer.js': ['<%= paths.src %>/admin/scripts/themer.js'],
 		'<%= paths.dev %>/admin/js/widgets-page.js': ['<%= paths.src %>/admin/scripts/widgets-page.js'],
-		'<%= paths.dev %>/admin/js/arcw.js': [
-			'<%= paths.src %>/admin/scripts/modernizr.js',
-			'<%= paths.src %>/admin/scripts/polyfills.js',
-			'<%= paths.src %>/admin/scripts/arcw.js'
+		'<%= paths.dev %>/js/arcw.js': [
+			'<%= paths.src %>/scripts/lib/modernizr.js',
+			'<%= paths.src %>/scripts/lib/polyfills.js',
+			'<%= paths.src %>/scripts/arcw.js'
 		]
 	};
 
