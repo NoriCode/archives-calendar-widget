@@ -1,0 +1,82 @@
+.arcw-nav {
+	position: relative;
+	display: table;
+	width: 100%;
+	height: $navigation-height;
+	line-height: $navigation-height;
+
+	.prev-page,
+	.next-page,
+	.menu-container {
+		position: relative;
+		display: table-cell; // DO NOT CHANGE
+		height: $navigation-height;
+		vertical-align: middle; // DO NOT CHANGE
+	}
+
+	// nav next/prev buttons
+	.btn-nav {
+		height: $navigation-height;
+		text-align: center;
+		line-height: inherit;
+		cursor: pointer;
+
+		&.disabled {
+			opacity: .5;
+			cursor: default;
+		}
+	}
+
+	.title {
+		display: block;
+		height: $navigation-height;
+		text-align: center;
+	}
+
+	// dropdown menu
+	.menu {
+		display: none;
+		position: absolute;
+		z-index: 99;
+		top: 0;
+		width: 100%;
+		margin: 0;
+		overflow: hidden;
+		background-color: $menu-bg-color;
+
+		&.opened {
+			display: block;
+		}
+
+	}
+
+	// dropdown menu items
+	.nav-item {
+		display: block;
+		cursor: pointer;
+		text-align: center;
+
+		&.active, &.active:hover {
+			cursor: default;
+		}
+		&:hover {
+
+		}
+	}
+
+	// drop down menu toggle button
+	.nav-toggle {
+		position: absolute;
+		top: 0;
+		right: 0;
+		height: $navigation-height;
+		width: $navigation-height;
+		font-size: inherit;
+		cursor: pointer;
+		&:before {
+			content: '▾';
+			font-family: Verdana, Arial, Helvetica, sans-serif;
+			font-size: 110%;
+		}
+	}
+}

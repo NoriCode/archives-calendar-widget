@@ -4,6 +4,7 @@
 **/
 @import "nav";
 @import "page-animation";
+@import "pages-years";
 
 .arcw {
 	position: relative; // DO NOT CHANGE
@@ -25,32 +26,31 @@
 	position: relative; // DO NOT CHANGE
 	overflow: hidden; // DO NOT CHANGE
 
+	// Base page container position and display
 	.arcw-page {
-		// Month/year container. Calendar "pages".
 		// DO NOT CHANGE
 		position: absolute;
 		top: 0;
 		left: 0;
 		margin-left: -100%;
 		width: 100%;
-		.year-link {
-			display: none;
-		}
 		&.active {
 			margin-left: 0;
 		}
-
-
 		&:last-child {
 			position: relative;
 		}
 	}
 
+	.month-page {
+		display: table;
+	}
+
 }
 
+// base for the month/day display
 .arcw {
-
-	.month, .day {
+	.month {
 		position: relative;
 		overflow: hidden;
 		float: left;
@@ -60,9 +60,29 @@
 		width: $month-width;
 		height: $month-height;
 	}
-	.day {
-		width: $day-width !important;
+}
+
+.weekdays {
+	display: table;
+	width: 100%;
+	.weekday {
+
 	}
+}
+
+.week-row {
+	display: table-row;
+	.day {
+		> a {
+			display: block;
+		}
+	}
+}
+
+.weekday, .day {
+	display: table-cell;
+	width: 14.28571428571429% !important;
+	text-align: center;
 }
 
 /* FOR PREVIEW IN CONFIGURATION ONLY */
