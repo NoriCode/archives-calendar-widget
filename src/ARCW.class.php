@@ -20,6 +20,9 @@ class ARCW {
 		$this->dates = $this->get_calendar_dates();
 
 		$this->activeDate = $this->get_active_date();
+
+		// enqueue different theme file if set
+		$this->enqueue_widget_theme();
 	}
 
 	/*
@@ -89,7 +92,8 @@ class ARCW {
 		// if categories is array count number of items
 		$categoriesCount = is_array( $this->config['categories'] ) ? count( $this->config['categories'] ) : 0;
 		// for the sql we `IN` operator we need a string list with commas
-		$categories = implode( ',', $this->config['categories'] );
+		// TODO this should be fixed with the options refactor
+		$categories = $this->config['categories'] ? implode( ',', $this->config['categories'] ) : $this->config['categories'];
 
 		// if categories were defined in the configuration we have to refine the query to filter posts that only are in the specified categories
 		if ( $categoriesCount ) {
@@ -280,6 +284,17 @@ class ARCW {
 		return true;
 	}
 
+	/**
+	 * Checks if the widget has a different theme
+	 * and enqueue the theme to add the css file to the page
+	 */
+	private function enqueue_widget_theme() {
+		if ( $this->config['different_theme'] ) {
+			$theme = $this->get_theme();
+			wp_register_style( 'archives-cal-' . $theme, plugins_url( 'themes/' . $theme . '.css', __FILE__ ), array(), ARCWV );
+			wp_enqueue_style( 'archives-cal-' . $theme );
+		}
+	}
 
 	/*
 	 * PUBLIC METHODS
