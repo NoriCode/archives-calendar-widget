@@ -121,8 +121,11 @@ function make_day( $year, $month, $day ) {
 	if ( $day ) {
 		$url   = $day['has-posts'] ? $arcw->filter_link( get_day_link( $year, $month, $day['date'] ) ) : null;
 		$title = date_i18n( get_option( 'date_format' ), strtotime( "{$year}-{$month}-{$day['date']}" ) );
+
+		$is_today = $arcw->is_today($year, $month, $day['date']);
 		?>
-		<span class="arcw-day-box <?php echo $url ? 'has-posts' : ''; ?>">
+
+		<span class="arcw-day-box <?php echo $url ? 'has-posts' : ''; ?> <?php echo $is_today ? "arcw-day-box--today" : ""; ?>">
 			<?php if ( $url ) {
 				echo "<a href=\"$url\" title=\"$title\">";
 			}

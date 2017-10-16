@@ -3,11 +3,14 @@
 class ARCW {
 
 	private $datesWithPosts = array();
+	public $today;
 
 	function __construct( $config ) {
 		global $wpdb, $wp_locale, $post;
 		$this->wpdb      = $wpdb;
 		$this->wp_locale = $wp_locale;
+
+		$this->today = $this->get_today_date_array();
 
 		// define the widget config
 		$this->config = $config;
@@ -81,6 +84,13 @@ class ARCW {
 		return $dates;
 	}
 
+	/**
+	 * Returns today's timestamp (no time just day)
+	 * @return false|int
+	 */
+	private function get_today_date_array() {
+		return Date( 'Y-n-j', time());
+	}
 
 	/**
 	 * Rreturn sql JOIN command to filter the results by the categories selected in the widget configuration
@@ -531,6 +541,11 @@ class ARCW {
 	 */
 	function has_posts( $date ) {
 		return $date['url'] && ! empty( $date['url'] );
+	}
+
+	public function is_today( $year, $month, $day ) {
+		$date = strtotime($year."-".$month."-".$day);
+		return strtotime($this->today) == $date;
 	}
 
 	function render() {
