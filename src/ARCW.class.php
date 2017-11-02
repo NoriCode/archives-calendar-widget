@@ -380,35 +380,17 @@ class ARCW {
 		return $nav;
 	}
 
-
 	/**
 	 * Return the number of days in a specified month
 	 * Taking leap years into account
-	 *
-	 * @param $year
-	 * @param $month
+	 * @param $month int
+	 * @param $year int
 	 *
 	 * @return int
 	 */
-	public function get_month_days( $year, $month ) {
-		switch ( intval( $month ) ) {
-			case 4:
-			case 6:
-			case 9:
-			case 11: // april, june, september, november
-				return 30; // 30 days
-			case 2: //february
-				if ( $year % 400 == 0 || ( $year % 100 != 00 && $year % 4 == 0 ) ) // leap year check
-				{
-					return 29;
-				} // 29 days or
-
-				return 28; // 28 days
-			default: // other months
-				return 31; // 31 days
-		}
+	public function get_month_days_number( $month, $year ) {
+		return intval(date('t',mktime(0,0,0,$month,1,$year)));
 	}
-
 
 	/**
 	 * Get full list of years and months for the "year view" template
