@@ -184,19 +184,20 @@ function get_month_grid( $year, $month, $days, $week_begins ) {
 	$firstweekday = intval( date( 'w', strtotime( $year . '-' . $month . '-01' ) ) );
 
 	// number of days in the month
-	$daysInMonth = $arcw->get_month_days( $year, $month );
+	$daysInMonth = $arcw->get_month_days_number( $month, $year );
 
 	// the grid array
 	$monthGrid = array();
 
-	$k = 0; // total grid counter
-
+	// total grid counter
+	$k = 0;
 	// put empty days in the grid till the month starts
-	for ( $i = $week_begins; $i < $firstweekday; $i ++ ) {
+	$j = $week_begins;
+	while ( $j !== $firstweekday ) {
 		$monthGrid[] = '';
-		$k ++; // increment the grid counter
+		$j = $j === 6 ? 0 : $j + 1;
+		$k ++;
 	}
-
 	// for the number of days in the month add a day array
 	for ( $j = 1; $j <= $daysInMonth; $j ++ ) {
 		$monthGrid[] = array(
@@ -205,7 +206,6 @@ function get_month_grid( $year, $month, $days, $week_begins ) {
 		);
 		$k ++; // increment the grid counter
 	}
-
 	// fill the rest with empty days
 	for ( $k; $k < 42; $k ++ ) {
 		$monthGrid[] = '';
