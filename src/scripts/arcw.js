@@ -201,6 +201,59 @@ ARCW.prototype.goToPage = function (destination) {
 
 };
 
+ARCW.prototype.nextPageAnimation = function (enter, active) {
+	var enterAnimationEnd = function (event) {
+		var element = event.target;
+		element.classList.remove('arcw-anim-enter');
+		element.classList.remove('next');
+		element.classList.add('active');
+		element.removeEventListener("transitionend", enterAnimationEnd, false);
+	};
+	var leaveAnimationEnd = function (event) {
+		var element = event.target;
+		element.classList.remove('arcw-anim-leave');
+		element.classList.remove('prev');
+		element.classList.remove('active');
+		element.removeEventListener("transitionend", leaveAnimationEnd, false);
+	};
+
+	enter.classList.add('arcw-anim-enter');
+	enter.classList.add('newer');
+	enter.addEventListener("transitionend", enterAnimationEnd, false);
+
+	active.classList.add('arcw-anim-leave');
+	active.classList.add('older');
+	active.addEventListener("transitionend", leaveAnimationEnd, false);
+};
+
+ARCW.prototype.prevPageAnimation = function (enter, active) {
+	var enterAnimationEnd = function (event) {
+		var element = event.target;
+		console.log('this', this);
+		element.classList.remove('arcw-anim-enter');
+		element.classList.remove('older');
+		element.classList.add('active');
+		element.removeEventListener("transitionend", enterAnimationEnd, false);
+	};
+	var leaveAnimationEnd = function (event) {
+		var element = event.target;
+		element.classList.remove('arcw-anim-leave');
+		element.classList.remove('newer');
+		element.classList.remove('active');
+
+		element.removeEventListener("transitionend", leaveAnimationEnd, false);
+	};
+
+	enter.classList.add('arcw-anim-enter');
+	enter.classList.add('older');
+	enter.addEventListener("transitionend", enterAnimationEnd, false);
+
+	active.classList.add('arcw-anim-leave');
+	active.classList.add('newer');
+	active.addEventListener("transitionend", leaveAnimationEnd, false);
+};
+
+
 /**
  * Manage the CSS3 animation for the page switching
  * @param goto - page we go to
@@ -212,45 +265,15 @@ ARCW.prototype.switchPages = function (goto, active) {
 	var gotoElem = self.pages[goto],
 		activeElem = self.pages[active];
 
-	var nextAnimationEndEvent = function (event) {
-		activeElem.classList.remove('leaveFade');
-		activeElem.classList.remove('active');
-
-		gotoElem.classList.add('active');
-		gotoElem.classList.remove('next');
-		gotoElem.classList.remove('enter');
-
-		gotoElem.removeEventListener("transitionend", nextAnimationEndEvent);
-	};
-	var prevAnimationEndEvent = function (event) {
-		var	thisIndex = activeElem.getAttribute('data-index'),
-			staticElem = self.pages[parseInt(thisIndex, 10) + 1];
-
-		staticElem.classList.remove('prev');
-		staticElem.classList.remove('enter');
-
-		activeElem.classList.remove('active');
-		activeElem.classList.remove('leave');
-		gotoElem.classList.add('active');
-
-		activeElem.removeEventListener("transitionend", prevAnimationEndEvent);
-	};
+	// plus l'index est plus petit plus la date est recente
 
 	if (active > goto) {
 		// NEXT navigating to newer date
-		gotoElem.addEventListener("transitionend", nextAnimationEndEvent, false);
-
-		gotoElem.classList.add('enter');
-		gotoElem.classList.add('next');
-		activeElem.classList.add('leaveFade');
+		self.nextPageAnimation(gotoElem, activeElem);
 	}
 	else {
 		// PREV navigating to older date
-		activeElem.addEventListener("transitionend", prevAnimationEndEvent, false);
-
-		gotoElem.classList.add('enter');
-		gotoElem.classList.add('prev');
-		activeElem.classList.add('leave');
+		self.prevPageAnimation(gotoElem, activeElem);
 	}
 };
 
@@ -288,14 +311,14 @@ ARCW.prototype.toggleMenu = function () {
 ARCW.prototype.toggleDisableNav = function () {
 	var self = this;
 	// disable Next button when active page is 0 (most recent)
-	if(self.active === 0){
+	if (self.active === 0) {
 		self.nav.next.classList.add('disabled');
 	}
 	else {
 		self.nav.next.classList.remove('disabled');
 	}
 	// disable prev button when active page is the last page (the oldest)
-	if(self.active === (self.navItems.length - 1)){
+	if (self.active === (self.navItems.length - 1)) {
 		self.nav.prev.classList.add('disabled');
 	}
 	else {

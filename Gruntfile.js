@@ -61,7 +61,10 @@ module.exports = function (grunt) {
 				tasks: ['newer:copy:dev']
 			},
 			scripts: {
-				files: ['<%= paths.src %>/admin/scripts/{,**/}*.js'],
+				files: [
+					'<%= paths.src %>/admin/scripts/{,**/}*.js',
+					'<%= paths.src %>/scripts/{,**/}*.js'
+				],
 				tasks: ['uglify:dev']
 			},
 			livereload: {

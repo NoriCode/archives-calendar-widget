@@ -6,22 +6,33 @@ $animation-time: .4s;
 .arcw-pages {
 	.arcw-page {
 
-		&.enter {
-			&.next {
+		@include transition(transform $animation-time);
+
+		&.arcw-anim-enter {
+			background: red;
+			// newer page enter (press next button)
+			&.newer {
 				@include translate(0, 0);
 				@include transition(transform $animation-time);
 			}
-			&.prev {
+			// older page enter (press prev button)
+			&.older {
 				@include translate(0, 0);
+				@include transition(transform $animation-time);
 			}
 		}
-		&.active.leave,
-		&.leave.prev,
-		&.leave {
-			@include translate(-100%, 0);
-			@include transition(transform $animation-time);
-		}
-		&.leaveFade {
+
+		&.arcw-anim-leave {
+			// newer active page leave (press prev button)
+			.newer{
+				@include translate(-100%, 0);
+				@include transition(all $animation-time);
+			}
+			// older active page leave (when press next button)
+			.older{
+				opacity: 0.1;
+				@include transition(all $animation-time);
+			}
 		}
 	}
 }

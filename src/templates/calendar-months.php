@@ -35,7 +35,7 @@ $weekdays = getWeekDays();
 
 				?>
 				<div class="arcw-page <?php echo $active ? 'active' : '' ?>"
-					 style="z-index:<?php echo $index; ?>">
+					 style="z-index:<?php echo $index; ?>" data-date="<?php echo $year . '-' . $month ?>">
 
 					<?php
 					echo "<div class=\"arcw-week-row\">";
