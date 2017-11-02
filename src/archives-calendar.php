@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Archives Calendar Widget
+Plugin Name: Archives Calendar Widget 2
 Plugin URI: https://wordpress.org/plugins/archives-calendar-widget/
 Description: Archives widget that makes your monthly/daily archives look like a calendar.
 Version: @@version
