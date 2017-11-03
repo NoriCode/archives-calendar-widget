@@ -31,7 +31,7 @@ $weekdays = getWeekDays();
 				// determine if the month is the active one
 				$active = ( $year == $arcw->activeDate->year && $month == $arcw->activeDate->month );
 				// build the month grid that we will use to display the month
-				$grid = get_month_grid( $year, $month, $days, $week_begins );
+				$grid = getMonthGrid( $year, $month, $days, $week_begins );
 
 				?>
 				<div class="arcw-page <?php echo $active ? 'active' : '' ?>"

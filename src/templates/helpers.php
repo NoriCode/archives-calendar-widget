@@ -177,11 +177,11 @@ function getWeekDays() {
  *
  * @return array
  */
-function get_month_grid( $year, $month, $days, $week_begins ) {
+function getMonthGrid( $year, $month, $days, $week_begins ) {
 	global $arcw;
 
 	// first weekday of the month
-	$firstweekday = intval( date( 'w', strtotime( $year . '-' . $month . '-01' ) ) );
+	$firstWeekday = intval( date( 'w', strtotime( $year . '-' . $month . '-01' ) ) );
 
 	// number of days in the month
 	$daysInMonth = $arcw->get_month_days_number( $month, $year );
@@ -190,13 +190,13 @@ function get_month_grid( $year, $month, $days, $week_begins ) {
 	$monthGrid = array();
 
 	// total grid counter
-	$k = 0;
+	$gridCounter = 0;
 	// put empty days in the grid till the month starts
 	$j = $week_begins;
-	while ( $j !== $firstweekday ) {
+	while ( $j !== $firstWeekday ) {
 		$monthGrid[] = '';
 		$j = $j === 6 ? 0 : $j + 1;
-		$k ++;
+		$gridCounter ++;
 	}
 	// for the number of days in the month add a day array
 	for ( $j = 1; $j <= $daysInMonth; $j ++ ) {
@@ -204,10 +204,10 @@ function get_month_grid( $year, $month, $days, $week_begins ) {
 			"date"      => $j,
 			"has-posts" => in_array( $j, $days )
 		);
-		$k ++; // increment the grid counter
+		$gridCounter ++; // increment the grid counter
 	}
 	// fill the rest with empty days
-	for ( $k; $k < 42; $k ++ ) {
+	for ( $k = $gridCounter; $k < 42; $k ++ ) {
 		$monthGrid[] = '';
 	}
 
