@@ -29,16 +29,17 @@
 	overflow: hidden; // DO NOT CHANGE
 
 	// Base page container position and display
-	.arcw-page {
+	> .arcw-page {
 		// DO NOT CHANGE
 		position: absolute;
 		top: 0;
 		left: 0;
 		display: table;
-		@include translate(-100%, 0);
+		//@include translate3d(-100%, 0, 0);
 		width: 100%;
+		background-color: #FFF;
 		&.active {
-			@include translate(0, 0);
+			//@include translate3d(0, 0, 0);
 		}
 		&:last-child {
 			position: relative;

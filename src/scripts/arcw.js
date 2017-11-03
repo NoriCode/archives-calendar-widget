@@ -11,9 +11,22 @@
  *  No JS animations CSS does it well.
  */
 
-var ARCW = function (calendar) {
+/**
+ *
+ * @param calendar {Element}
+ * @param options {{cssAnimation}}
+ * @constructor
+ */
+var ARCW = function (calendar, options) {
 	var self = this;
 	this.calendar = calendar;
+	// Update options
+	this.options = {
+		cssAnimation: true
+	};
+	if(options && typeof options === 'object'){
+		this.options = Object.assign({}, this.options, options);
+	}
 	// Elements declarations on init
 	this.navigation = this.calendar.querySelector('.arcw-nav');
 	this.navButtons = this.navigation.querySelectorAll('[data-nav]');
@@ -186,7 +199,7 @@ ARCW.prototype.goToPage = function (destination) {
 	self.navItems[self.active].classList.remove("active");
 	self.navItems[goto].classList.add("active");
 	// start page switching if supported
-	if (Modernizr.csstransitions) {
+	if (self.options.cssAnimation && Modernizr.csstransitions) {
 		// if transitions are supported use animations
 		self.switchPages(goto, self.active);
 	}
@@ -201,15 +214,17 @@ ARCW.prototype.goToPage = function (destination) {
 
 };
 
-ARCW.prototype.nextPageAnimation = function (enter, active) {
+ARCW.prototype.nextPageAnimation = function (enter, active, direction) {
 	var enterAnimationEnd = function (event) {
 		var element = event.target;
+		console.log('next enter this', this);
 		element.classList.remove('arcw-anim-enter');
 		element.classList.remove('next');
 		element.classList.add('active');
 		element.removeEventListener("transitionend", enterAnimationEnd, false);
 	};
 	var leaveAnimationEnd = function (event) {
+		console.log('next leave this', this);
 		var element = event.target;
 		element.classList.remove('arcw-anim-leave');
 		element.classList.remove('prev');
@@ -217,40 +232,76 @@ ARCW.prototype.nextPageAnimation = function (enter, active) {
 		element.removeEventListener("transitionend", leaveAnimationEnd, false);
 	};
 
-	enter.classList.add('arcw-anim-enter');
-	enter.classList.add('newer');
-	enter.addEventListener("transitionend", enterAnimationEnd, false);
+	var leaveDirection = 'leave';
+	var enterDirection = 'enter';
 
-	active.classList.add('arcw-anim-leave');
-	active.classList.add('older');
-	active.addEventListener("transitionend", leaveAnimationEnd, false);
+	var animElement = direction === 'next' ? active : enter;
+
+	var animationEnd = function (event) {
+		var element = event.target;
+		element.classList.add('active');
+		element.classList.remove(direction, enterDirection);
+
+		active.classList.remove('active');
+		active.classList.remove(direction, leaveDirection);
+		element.removeEventListener("transitionend", animationEnd, true);
+	};
+
+	enter.classList.add(direction, enterDirection);
+	active.classList.add(direction,leaveDirection);
+
+	enter.addEventListener("transitionend", animationEnd, true);
+
+	// enter.addEventListener("transitionend", enterAnimationEnd, false);
+	// active.addEventListener("transitionend", leaveAnimationEnd, false);
 };
 
 ARCW.prototype.prevPageAnimation = function (enter, active) {
 	var enterAnimationEnd = function (event) {
 		var element = event.target;
-		console.log('this', this);
-		element.classList.remove('arcw-anim-enter');
-		element.classList.remove('older');
+
 		element.classList.add('active');
+		element.classList.remove('prev');
+		element.classList.remove('in');
+
 		element.removeEventListener("transitionend", enterAnimationEnd, false);
 	};
 	var leaveAnimationEnd = function (event) {
 		var element = event.target;
-		element.classList.remove('arcw-anim-leave');
-		element.classList.remove('newer');
+
+		console.log('out end')
+
 		element.classList.remove('active');
+		element.classList.remove('out');
+		element.classList.remove('prev');
 
 		element.removeEventListener("transitionend", leaveAnimationEnd, false);
 	};
 
-	enter.classList.add('arcw-anim-enter');
-	enter.classList.add('older');
-	enter.addEventListener("transitionend", enterAnimationEnd, false);
+	var prevAnimationEnd = function (event) {
+		var element = event.target;
 
-	active.classList.add('arcw-anim-leave');
-	active.classList.add('newer');
-	active.addEventListener("transitionend", leaveAnimationEnd, false);
+		element.classList.add('active');
+		element.classList.remove('prev');
+		element.classList.remove('in');
+
+		active.classList.remove('active');
+		active.classList.remove('prev');
+		active.classList.remove('out');
+
+		element.removeEventListener("transitionend", prevAnimationEnd, false);
+	};
+
+	// prev elem enter
+	enter.classList.add('prev');
+	enter.classList.add('in');
+	// enter.addEventListener("transitionend", enterAnimationEnd, false);
+	enter.addEventListener("transitionend", prevAnimationEnd, false);
+
+	// current elem leave
+	active.classList.add('prev');
+	active.classList.add('out');
+	// active.addEventListener("transitionend", leaveAnimationEnd, false);
 };
 
 
@@ -269,11 +320,11 @@ ARCW.prototype.switchPages = function (goto, active) {
 
 	if (active > goto) {
 		// NEXT navigating to newer date
-		self.nextPageAnimation(gotoElem, activeElem);
+		self.nextPageAnimation(gotoElem, activeElem, 'next');
 	}
 	else {
 		// PREV navigating to older date
-		self.prevPageAnimation(gotoElem, activeElem);
+		self.nextPageAnimation(gotoElem, activeElem, 'prev');
 	}
 };
 
@@ -336,7 +387,7 @@ var onDomContentLoaded = function () {
 	var calendars = document.querySelectorAll('.calendar-archives');
 	// for each calendar create the ARCW instance
 	for (var i = 0; i < calendars.length; i++) {
-		new ARCW(calendars[i]);
+		new ARCW(calendars[i], {cssAnimation: true});
 	}
 	// once the event is fired remove the listener
 	document.removeEventListener("DOMContentLoaded", onDomContentLoaded);
