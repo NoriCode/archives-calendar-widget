@@ -1,12 +1,12 @@
 <?php
 
-class ARCW {
+class ARCWidget {
 
 	private $datesWithPosts = array();
 	public $today;
 
 	function __construct( $config ) {
-		global $wpdb, $wp_locale, $post;
+		global $wpdb, $wp_locale;
 		$this->wpdb      = $wpdb;
 		$this->wp_locale = $wp_locale;
 
@@ -26,6 +26,7 @@ class ARCW {
 
 		// enqueue different theme file if set
 		$this->enqueue_widget_theme();
+		$this->render( 'templates/calendar.php' );
 	}
 
 	/*
@@ -89,7 +90,7 @@ class ARCW {
 	 * @return false|int
 	 */
 	private function get_today_date_array() {
-		return Date( 'Y-n-j', time());
+		return Date( 'Y-n-j', time() );
 	}
 
 	/**
@@ -354,6 +355,10 @@ class ARCW {
 		return $this->config['different_theme'] ? $this->config['theme'] : $this->plugin_options['theme'];
 	}
 
+	function get_view_mode() {
+		return $this->config['month_view'] ? 'months' : 'years';
+	}
+
 	/**
 	 * Return an array with items for the calendar navigation
 	 * @return array
@@ -383,13 +388,14 @@ class ARCW {
 	/**
 	 * Return the number of days in a specified month
 	 * Taking leap years into account
+	 *
 	 * @param $month int
 	 * @param $year int
 	 *
 	 * @return int
 	 */
 	public function get_month_days_number( $month, $year ) {
-		return intval(date('t',mktime(0,0,0,$month,1,$year)));
+		return intval( date( 't', mktime( 0, 0, 0, $month, 1, $year ) ) );
 	}
 
 	/**
@@ -526,12 +532,173 @@ class ARCW {
 	}
 
 	public function is_today( $year, $month, $day ) {
-		$date = strtotime($year."-".$month."-".$day);
-		return strtotime($this->today) == $date;
+		$date = strtotime( $year . "-" . $month . "-" . $day );
+
+		return strtotime( $this->today ) == $date;
 	}
 
-	function render() {
+	public function render( $template = "" ) {
+		$arcw = $this;
+		include $template;
+	}
 
+	/*
+	* HELPERS
+	* =======
+	*/
+
+	/**
+	 * prints the navigation title
+	 * with or without link
+	 */
+	function headerTite() {
+		$view = $this->config['month_view'] ? 'months' : 'years';
+		$href = "";
+
+		if ( $view == "months" ) {
+			$title = $this->wp_locale->get_month( $this->activeDate->month ) . " " . $this->activeDate->year;
+
+			if ( $this->config['disable_title_link'] == false ) {
+				$href = get_month_link( $this->activeDate->year, $this->activeDate->month );
+			}
+		} else {
+			$title = $this->activeDate->year;
+
+			if ( $this->config['disable_title_link'] == false ) {
+				$href = get_year_link( $this->activeDate->year );
+			}
+		}
+
+		if ( $this->config['disable_title_link'] == false ) {
+			$href = " href=\"{$this->filter_link( $href )}\"";
+			$tag  = 'a';
+		} else {
+			$href = "";
+			$tag  = "span";
+		}
+
+		$format = '<%s%s class="arcw-title">%s</%s>';
+		echo sprintf( $format, $tag, $href, $title, $tag );
+	}
+
+	/**
+	 * Complete the navigation list with additional data for templating
+	 * like title or url
+	 * @return mixed
+	 */
+	function get_navigation() {
+		// this is simple list of arrays
+		$navigation = $this->get_navigation_list();
+
+		// we update it with some useful data for the template
+		foreach ( $navigation as &$nav ) {
+
+			if ( $this->config['month_view'] ) {
+				$nav['active'] = $nav['year'] == $this->activeDate->year && $nav['month'] == $this->activeDate->month;
+				$nav['url']    = $this->filter_link( get_month_link( intval( $nav['year'] ), intval( $nav['month'] ) ) );
+				$nav['title']  = $this->wp_locale->get_month( intval( $nav['month'] ) ) . ' ' . $nav['year'];
+			} else {
+				$nav['active'] = $nav['year'] == $this->activeDate->year;
+				$nav['url']    = $this->filter_link( get_year_link( $nav['year'] ) );
+				$nav['title']  = $nav['year'];
+			}
+		}
+
+		return $navigation;
+	}
+
+	/**
+	 * Will return the text with number of posts
+	 *
+	 * @param $year
+	 * @param $month
+	 * @param $day
+	 *
+	 * @return null|string
+	 */
+	function day_posts_count( $year, $month, $day ) {
+		global $arcw;
+
+		if ( $this->config['post_count'] ) {
+			$count = $this->get_post_count( $year, $month, $day );
+
+			return "{$count} " . _n( 'Post', 'Posts', $count );
+		}
+
+		return null;
+	}
+
+	/**
+	 * Return ordered list of weekday localised names (long => short)
+	 * starting with the day configured in the WP options.
+	 * @return array
+	 */
+	function getWeekDays() {
+		/**
+		 * Get the WP option "Week starts on"
+		 * 0 = Sunday
+		 * 6 = Monday
+		 */
+		$week_begins = intval( get_option( 'start_of_week' ) );
+
+		/**
+		 * List of the weekdays based on WP settings
+		 */
+		$weekdays = array();
+
+		for ( $i = 0; $i <= 6; $i ++ ) {
+			$long_name              = $this->wp_locale->get_weekday( ( $i + $week_begins ) % 7 );
+			$weekdays[ $long_name ] = $this->wp_locale->get_weekday_abbrev( $long_name );
+		}
+
+		return $weekdays;
+	}
+
+	/**
+	 * Build an array for the complete month grid
+	 * with empty entries for the previous/next month days
+	 * days of the month will be array("date" => integer, "has-posts" => boolean)
+	 *
+	 * @param $year
+	 * @param $month
+	 * @param $days
+	 * @param $week_begins
+	 *
+	 * @return array
+	 */
+	function getMonthGrid( $year, $month, $days, $week_begins ) {
+		// first weekday of the month
+		$firstWeekday = intval( date( 'w', strtotime( $year . '-' . $month . '-01' ) ) );
+
+		// number of days in the month
+		$daysInMonth = $this->get_month_days_number( $month, $year );
+
+		// the grid array
+		$monthGrid = array();
+
+		// total grid counter
+		$gridCounter = 0;
+		// put empty days in the grid till the month starts
+		$j = $week_begins;
+		while ( $j !== $firstWeekday ) {
+			$monthGrid[] = '';
+			$j           = $j === 6 ? 0 : $j + 1;
+			$gridCounter ++;
+		}
+		// for the number of days in the month add a day array
+		for ( $j = 1; $j <= $daysInMonth; $j ++ ) {
+			$monthGrid[] = array(
+				"date"      => $j,
+				"has-posts" => in_array( $j, $days )
+			);
+			$gridCounter ++; // increment the grid counter
+		}
+		// fill the rest with empty days
+		for ( $k = $gridCounter; $k < 42; $k ++ ) {
+			$monthGrid[] = '';
+		}
+
+		return $monthGrid;
 	}
 
 }

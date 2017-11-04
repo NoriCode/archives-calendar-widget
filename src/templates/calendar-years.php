@@ -1,7 +1,6 @@
 <?php
 /**
- * @global Arcw $arcw
- * @global WP_Locale $wp_locale
+ * @global ARCWidget $arcw
  */
 ?>
 	<div class="arcw-pages arcw-years">
@@ -22,7 +21,6 @@
 						echo '</div>' . "\n" . '<div class="arcw-month-row">' . "\n";
 					}
 
-
 					if ( array_key_exists( $monthNum, $months ) ) {
 						$month = array(
 							"url" => $arcw->filter_link( get_month_link( $year, $monthNum ) )
@@ -38,7 +36,7 @@
 						$month['full_date'] .= " - $post_count " . _n( 'Post', 'Posts', $post_count );
 					}
 
-					$month['name'] = $wp_locale->get_month_abbrev( $wp_locale->get_month( $monthNum ) );
+					$month['name'] = $arcw->wp_locale->get_month_abbrev( $arcw->wp_locale->get_month( $monthNum ) );
 
 					?>
 					<div class="arcw-month-box <?php echo $month['url'] ? "has-posts" : "" ?>">
@@ -51,7 +49,20 @@
 								<?php echo $month['name'] ?>
 							</span>
 
-							<?php month_posts_count( $post_count ); ?>
+							<?php
+							if ( $post_count !== null ) {
+								?>
+								<span class="arcw-postcount">
+									<span class="arcw-count-number">
+										<?php echo $post_count ?>
+									</span>
+									<span class="arcw-count-text">
+										<?php echo _n( 'Post', 'Posts', $post_count ); ?>
+									</span>
+								</span>
+								<?php
+							}
+							?>
 
 							<?php if ( $month['url'] ) : ?>
 						</a>

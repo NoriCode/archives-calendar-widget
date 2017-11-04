@@ -68,8 +68,10 @@ if ( $archivesCalendar_options['css'] == 1 ) {
 	add_action( 'wp_enqueue_scripts', 'archives_calendar_styles' );
 }
 
-// WIDGET INITIALISATION
-add_action( 'widgets_init', create_function( '', 'register_widget( "Archives_Calendar" );' ) );
+// Widget registration (PHP 5.3+)
+//add_action( 'widgets_init', function(){
+//	register_widget( 'Archives_Calendar' );
+//});
 
 /**** INIT/ENQUEUE FUNCTIONS ****/
 function archivesCalendar_init() {
@@ -190,6 +192,18 @@ if ( ! function_exists( 'debug' ) ) {
 	function debug( $context = "" ) {
 		if ( ARCW_DEBUG === true ) {
 			print_r( $context );
+		}
+	}
+}
+
+
+/** DEBUG FUNCTION **/
+if ( ! function_exists( 'alog' ) ) {
+	function alog( $context = "" ) {
+		if ( ARCW_DEBUG === true ) {
+			echo '<script>console.log("';
+			print_r( $context );
+			echo '"); </script>';
 		}
 	}
 }

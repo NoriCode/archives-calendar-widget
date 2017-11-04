@@ -1,24 +1,19 @@
 <?php
 /**
- * In case calendar.php is included in a function.
- *
- * @global Arcw $arcw
- * @global WP_Locale $wp_locale
+ * @global ARCWidget $arcw
  */
 
-require_once 'helpers.php';
 ?>
 <!-- Archives Calendar Widget by Aleksei Polechin - alek´ - http://alek.be -->
 <div class="arcw calendar-archives  <?php echo $arcw->get_theme() ?>">
-	<?php // Calendar header/navigation ?>
-	<div class="arcw-nav">
-		<?php include 'navigation.php'; ?>
-	</div>
 	<?php
+	// Calendar header/navigation
+	$arcw->render( 'templates/navigation.php' );
+	// Calendar pages
 	if ( $arcw->config['month_view'] ) {
-		include 'calendar-months.php';
+		$arcw->render( 'templates/calendar-months.php' );
 	} else {
-		include 'calendar-years.php';
+		$arcw->render( 'templates/calendar-years.php' );
 	}
 	?>
 </div>

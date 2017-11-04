@@ -78,8 +78,10 @@ class Archives_Calendar_Widget_Settings {
 add_action( 'plugins_loaded', create_function( '', '$settings_api_tabs_demo_plugin = new Archives_Calendar_Widget_Settings;' ) );
 
 function arcw_admin_scripts() {
+global $wp;
+	echo "<script>console.log('".print_r($wp->widgets)."');</script>";
 
-    wp_enqueue_script(
+	wp_enqueue_script(
         'arcw-admin',
         plugins_url( '/admin/js/admin.js' , __FILE__ ),
         array( 'jquery' ),

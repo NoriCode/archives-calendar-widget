@@ -1,13 +1,12 @@
 <?php
 /**
- * @global Arcw $arcw
- * @global WP_Locale $wp_locale
+ * @global ARCWidget $arcw
  */
-$view       = $arcw->config['month_view'] ? 'months' : 'years';
-$navigation = prepare_nav();
+
+$navigation = $arcw->get_navigation();
 $nbPages    = count( $navigation );
 ?>
-
+<div class="arcw-nav">
 <?php if ( $nbPages > 1 ) : ?>
 	<div class="arcw-btn-nav" data-nav="prev">
 		<?php echo html_entity_decode( $arcw->config['prev_text'] ) ?>
@@ -15,9 +14,9 @@ $nbPages    = count( $navigation );
 <?php endif ?>
 
 
-	<div class="arcw-menu-container <?php echo $view ?>">
+	<div class="arcw-menu-container <?php echo $arcw->get_view_mode() ?>">
 
-		<?php headerTite() ?>
+		<?php $arcw->headerTite() ?>
 
 		<ul class="arcw-menu">
 			<?php
@@ -39,4 +38,6 @@ $nbPages    = count( $navigation );
 	<div class="arcw-btn-nav" data-nav="next">
 		<?php echo html_entity_decode( $arcw->config['next_text'] ) ?>
 	</div>
-<?php endif;
+<?php endif; ?>
+</div>
+<?php

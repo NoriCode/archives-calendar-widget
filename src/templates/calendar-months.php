@@ -1,11 +1,10 @@
 <?php
 /**
- * @global Arcw $arcw
- * @global WP_Locale $wp_locale
+ * @global ARCWidget $arcw
  */
 
 // get the weekdays names array
-$weekdays = getWeekDays();
+$weekdays = $arcw->getWeekDays();
 ?>
 	<!-- This is the weekdays name over the page of months-->
 	<div class="arcw-weekdays">
@@ -31,7 +30,7 @@ $weekdays = getWeekDays();
 				// determine if the month is the active one
 				$active = ( $year == $arcw->activeDate->year && $month == $arcw->activeDate->month );
 				// build the month grid that we will use to display the month
-				$grid = getMonthGrid( $year, $month, $days, $week_begins );
+				$grid = $arcw->getMonthGrid( $year, $month, $days, $week_begins );
 
 				?>
 				<div class="arcw-page <?php echo $active ? 'active' : '' ?>"
@@ -61,3 +60,35 @@ $weekdays = getWeekDays();
 	</div>
 
 <?php
+
+/**
+ * The day template
+ *
+ * @param $year
+ * @param $month
+ * @param $day
+ */
+function make_day( $year, $month, $day ) {
+	if ( $day ) {
+		$url   = $day['has-posts'] ? $this->filter_link( get_day_link( $year, $month, $day['date'] ) ) : null;
+		$title = date_i18n( get_option( 'date_format' ), strtotime( "{$year}-{$month}-{$day['date']}" ) );
+
+		$is_today = $this->is_today( $year, $month, $day['date'] );
+		?>
+
+		<span class="arcw-day-box <?php echo $url ? 'has-posts' : ''; ?> <?php echo $is_today ? "arcw-day-box--today" : ""; ?>">
+			<?php if ( $url ) {
+				echo "<a href=\"$url\" title=\"$title\">";
+			}
+
+			echo $day['date'];
+
+			if ( $url ) {
+				echo "</a>";
+			} ?>
+		</span>
+		<?php
+	} else {
+		echo "<span class=\"arcw-day-box empty\">&nbsp;</span>";
+	}
+}
